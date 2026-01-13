@@ -1,3 +1,4 @@
+//mills/table.tsx
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
 import Link from "next/link";

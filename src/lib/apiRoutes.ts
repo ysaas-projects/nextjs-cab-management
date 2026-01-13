@@ -21,5 +21,6 @@ export const API_ROUTES = {
     PRODUCT_IMAGES: "/product-images",
     SELLING_PRICES: "/selling-prices",
     ORDERS: "/orders",
+    CABS:"/Cabs"
     // PRODUCT_DETAILS: (id: number) => `/products/${id}/details`,
 };
