@@ -21,6 +21,7 @@ export const API_ROUTES = {
     PRODUCT_IMAGES: "/product-images",
     SELLING_PRICES: "/selling-prices",
     ORDERS: "/orders",
-    CABS:"/Cabs"
+    CABS:"/Cabs",
+    PRICING_RULES: "/PricingRules"
     // PRODUCT_DETAILS: (id: number) => `/products/${id}/details`,
 };
