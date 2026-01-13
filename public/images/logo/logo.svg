@@ -1,0 +1,33 @@
+<svg width="154" height="32" viewBox="0 0 154 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Sugar Cube Icon -->
+  <g transform="translate(4,4) scale(0.35)">
+    <polygon points="40,0 80,20 40,40 0,20" fill="#7EC8FF"/>
+    <polygon points="0,20 40,40 40,80 0,60" fill="#4DA8DA"/>
+    <polygon points="40,40 80,20 80,60 40,80" fill="#9AD9FF"/>
+  </g>
+
+  <!-- Brand Text -->
+  <text
+    x="44"
+    y="22"
+    font-family="Segoe UI, Poppins, Arial"
+    font-size="16"
+    font-weight="700"
+    fill="#101828"
+  >
+    Epic
+  </text>
+
+  <text
+    x="82"
+    y="22"
+    font-family="Segoe UI, Poppins, Arial"
+    font-size="16"
+    font-weight="700"
+    fill="#101828"
+  >
+    Sugar
+  </text>
+
+</svg>
