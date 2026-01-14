@@ -1,5 +1,5 @@
 "use client";
-
+// mills/create/page.tsx
 import Button from "@/components/atoms/Button";
 import CustomInput from "@/components/atoms/CustomInput";
 import LocationSelector from "@/components/molecules/LocationSelector";
