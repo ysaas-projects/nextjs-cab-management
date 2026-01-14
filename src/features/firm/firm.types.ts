@@ -5,12 +5,17 @@ export interface Firm {
   firmName: string;
   firmCode: string;
   isActive: boolean;
-  IsDeleted: boolean;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
+export interface FirmDto {
+  firmId?: number;
+  firmName: string;
+  firmCode: string;
+  isActive?: boolean;
+}
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -18,4 +23,12 @@ export interface ApiResponse<T> {
   data: T;
   error?: string;
   errors?: string[];
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages?: number;
 }
