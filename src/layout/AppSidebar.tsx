@@ -18,6 +18,8 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { icon: <Icon name="BoxCubeIcon" />, name: "Dashboard", path: "/" },
+    { icon: <Icon name="BoxCubeIcon" />, name: "Firm", path: "/firms" },
+
   { icon: <Icon name="BoxCubeIcon" />, name: "Mills", path: "/mills", roles: ["Super-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "Company / Buyer", path: "/companies", roles: [ "Super-Admin"] },
 
