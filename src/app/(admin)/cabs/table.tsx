@@ -1,7 +1,12 @@
 // cabs/table.tsx
+"use client";
+
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
 import Link from "next/link";
+import { enqueueSnackbar } from "notistack";
+import { useDeleteCabMutation } from "@/features/cab";
+import { useState } from "react";
 
 type Props = {
     data: {
@@ -13,6 +18,25 @@ type Props = {
 };
 
 const CabTable = ({ data }: Props) => {
+    const [deleteCab, { isLoading: isDeleting }] = useDeleteCabMutation();
+    const [deletingId, setDeletingId] = useState<number | null>(null);
+
+    const handleDelete = async (id: number) => {
+        const confirmed = window.confirm("Are you sure you want to delete this cab?");
+        if (!confirmed) return;
+
+        try {
+            setDeletingId(id);
+            await deleteCab(id).unwrap();
+            enqueueSnackbar("Cab deleted successfully", { variant: "success" });
+        } catch (err: any) {
+            console.error("Failed to delete cab", err);
+            enqueueSnackbar(err?.data?.message || "Failed to delete cab", { variant: "error" });
+        } finally {
+            setDeletingId(null);
+        }
+    };
+
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
             <table className="min-w-full text-sm text-left text-gray-600">
