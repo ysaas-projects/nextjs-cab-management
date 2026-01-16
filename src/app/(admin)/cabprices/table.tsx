@@ -14,7 +14,7 @@ export interface CabPricesTableProps {
     firmName: string;
     cabType: string;
     pricingRuleId: number;
-    pricingRuleName:string;
+    pricingRuleName: string;
     price: number;
     isActive: boolean;
     createdAt: string;
@@ -74,18 +74,30 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
           {data.map((item, index) => (
             <tr
               key={item.cabPriceId}
-              className={`border-t hover:bg-gray-50 transition ${
+              onClick={() =>
+                (window.location.href = `/cabprices/${item.cabPriceId}`)
+              }
+              className={`border-t cursor-pointer transition ${
                 index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
-              }`}
+              } hover:bg-gray-100`}
             >
-                            <td className="px-6 py-4 font-medium text-gray-800">
+              <td className="px-6 py-4 font-medium text-gray-800">
                 {index + 1}
               </td>
+
               <td className="px-6 py-4">{item.firmName}</td>
-              <td className="px-6 py-4">{item.cabType}</td>
-<td className="px-6 py-4">
-  {item.pricingRuleName}
-</td>              <td className="px-6 py-4 font-medium">₹{item.price}</td>
+
+              <td className="px-6 py-4 text-link">
+                {item.cabType}
+              </td>
+
+              <td className="px-6 py-4 text-link">
+                {item.pricingRuleName}
+              </td>
+
+              <td className="px-6 py-4 font-medium">
+                ₹{item.price}
+              </td>
 
               <td className="px-6 py-4">
                 <span
@@ -100,7 +112,10 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
               </td>
 
               {/* ===== ACTIONS ===== */}
-              <td className="px-6 py-4 text-center space-x-2">
+              <td
+                className="px-6 py-4 text-center space-x-2"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {/* ✏️ EDIT */}
                 <Link href={`/cabprices/edit/${item.cabPriceId}`}>
                   <Button

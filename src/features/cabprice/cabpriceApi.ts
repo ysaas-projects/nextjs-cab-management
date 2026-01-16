@@ -16,6 +16,14 @@ export const cabpriceApi = api.injectEndpoints({
     }),
 
     // ===============================
+// GET CAB PRICE BY ID (VIEW)
+// ===============================
+getCabPrice: builder.query<CabPrice, number>({
+  query: (id) => `/cabprices/${id}`,
+  transformResponse: (res: ApiResponse<CabPrice>) => res.data,
+  providesTags: ["CabPrices"],
+}),
+    // ===============================
     // GET CAB PRICES BY CAB ID
     // ===============================
     getCabPricesByCabId: builder.query<CabPrice[], number>({
@@ -30,7 +38,6 @@ export const cabpriceApi = api.injectEndpoints({
     createCabPrice: builder.mutation<
       CabPrice,
       {
-        firmId: number;
         cabId: number;
         pricingRuleId: number;
         price: number;
@@ -93,6 +100,7 @@ export const {
   useCreateCabPriceMutation,
   useUpdateCabPriceMutation,
   useDeleteCabPriceMutation, 
+    useGetCabPriceQuery, 
 
 
 } = cabpriceApi;

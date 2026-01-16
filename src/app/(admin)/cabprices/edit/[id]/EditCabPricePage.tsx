@@ -97,7 +97,7 @@ const { data: pricingRules = [] } = useGetPricingRulesQuery();
       <ComponentCard title="Edit Cab Price">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <CustomSelect
+          {/* <CustomSelect
             label="Firm"
             name="firmId"
             value={form.firmId}
@@ -106,7 +106,7 @@ const { data: pricingRules = [] } = useGetPricingRulesQuery();
   id: f.firmId,
   name: f.firmName,
 }))}
-          />
+          /> */}
 
           <CustomSelect
             label="Cab"
