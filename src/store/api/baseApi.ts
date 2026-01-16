@@ -12,6 +12,8 @@ export const baseQueryWithReauth: BaseQueryFn<
     unknown,
     FetchBaseQueryError
 > = async (args, api, extraOptions) => {
+    console.log("BASE URL =", process.env.NEXT_PUBLIC_API_URL);
+
     let result = await baseQuery(args, api, extraOptions);
     console.log("API call:", args, "Result:", result);
     // 🔴 If token expired

@@ -14,7 +14,12 @@ export const api = createApi({
         "State",
         "City",
         "KYC",
+        "Cab",
+        "PricingRule",
         "Firms",
+        "Users",
+        "CabPrices",
+
     ],
     endpoints: () => ({}),
 });

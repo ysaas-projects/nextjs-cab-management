@@ -17,10 +17,18 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
+    { icon: <Icon name="BoxCubeIcon" />, name: "Users", path: "/users"},
+
   { icon: <Icon name="BoxCubeIcon" />, name: "Dashboard", path: "/" },
+  { icon: <Icon name="BoxCubeIcon" />, name: "Cabs", path: "/cabs"},
+      { icon: <Icon name="BoxCubeIcon" />, name: "CabPrices", path: "/cabprices"},
+
+  { icon: <Icon name="BoxCubeIcon" />, name: "Pricing Rules", path: "/pricing-rules"},
+
     { icon: <Icon name="BoxCubeIcon" />, name: "Firm", path: "/firms" },
 
   { icon: <Icon name="BoxCubeIcon" />, name: "Mills", path: "/mills", roles: ["Super-Admin"] },
+
   { icon: <Icon name="BoxCubeIcon" />, name: "Company / Buyer", path: "/companies", roles: [ "Super-Admin"] },
 
   // Mill-admin

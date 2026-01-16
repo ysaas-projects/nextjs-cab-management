@@ -1,5 +1,5 @@
 {
-  "name": "epic-sugar",
+  "name": "cab-management",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -23,7 +23,7 @@
     "apexcharts": "^4.7.0",
     "autoprefixer": "^10.4.22",
     "flatpickr": "^4.6.13",
-    "html2pdf.js": "^0.12.1",
+    "html2pdf.js": "^0.14.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "next": "16.0.10",

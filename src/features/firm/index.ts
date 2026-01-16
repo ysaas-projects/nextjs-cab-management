@@ -1,7 +1,6 @@
 // API
 export {
   firmApi,
-  useGetFirmsWithDetailsQuery,
 } from "./firmApi";
 
 // Types
