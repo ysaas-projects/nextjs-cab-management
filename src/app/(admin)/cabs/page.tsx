@@ -9,31 +9,29 @@ import Link from "next/link";
 import Button from "@/components/atoms/Button";
 import CabTable from "./table";
 
-import { useGetCabsQuery } from "@/features/cab/cabApi";
+import { useGetPaginatedCabsQuery } from "@/features/cab/cabApi";
 import { Cab } from "@/features/cab/cab.types";
 
 export default function Cabs() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
-    // 🔹 If pagination API is not ready yet,
-    // we’ll paginate on frontend (same logic style)
-    const { data, isLoading, isError } = useGetCabsQuery();
+    const { data, isLoading, isError } = useGetPaginatedCabsQuery({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+    }, {
+    refetchOnMountOrArgChange: true, 
+  });
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error loading cabs.</div>;
 
-    const allCabs: Cab[] = data ?? [];
+    // ✅ backend-driven pagination
+    const cabs: Cab[] = data?.items ?? [];
+    const totalPages = data?.totalPages ?? 1;
+    const totalCount = data?.totalCount ?? 0;
 
-    const totalCount = allCabs.length;
-    const totalPages = Math.ceil(totalCount / itemsPerPage);
-
-    const paginatedCabs = allCabs.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const transformedData = paginatedCabs.map((cab) => ({
+    const transformedData = cabs.map((cab) => ({
         id: cab.cabId,
         cabType: cab.cabType,
         firmName: (cab as any).firmName ?? "—",

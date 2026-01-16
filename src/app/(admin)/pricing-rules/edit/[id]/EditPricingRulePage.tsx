@@ -15,7 +15,7 @@ export default function EditPricingRulePage() {
 
     const [form, setForm] = useState({
         firmId: "",
-        roleDetails: "",
+        ruleDetails: "",
         isActive: true,
     });
 
@@ -86,7 +86,7 @@ export default function EditPricingRulePage() {
             console.log("Updating form with pricing rule data", pricingRule);
             setForm({
                 firmId: pricingRule.firmId.toString(),
-                roleDetails: pricingRule.roleDetails,
+                ruleDetails: pricingRule.ruleDetails,
                 isActive: pricingRule.isActive,
             });
         }
@@ -143,12 +143,12 @@ export default function EditPricingRulePage() {
                         <div className="mt-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Role Details</label>
                             <textarea
-                                name="roleDetails"
-                                value={form.roleDetails}
+                                name="ruleDetails"
+                                value={form.ruleDetails}
                                 onChange={handleChange}
                                 rows={4}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter role details..."
+                                placeholder="Enter rule details..."
                             />
                             {errors.roleDetails && (
                                 <p className="mt-1 text-sm text-red-600">{errors.roleDetails}</p>

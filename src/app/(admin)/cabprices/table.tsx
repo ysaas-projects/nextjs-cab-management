@@ -14,6 +14,7 @@ export interface CabPricesTableProps {
     firmName: string;
     cabType: string;
     pricingRuleId: number;
+    pricingRuleName:string;
     price: number;
     isActive: boolean;
     createdAt: string;
@@ -77,14 +78,14 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
                 index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
               }`}
             >
-              <td className="px-6 py-4 font-medium text-gray-800">
+                            <td className="px-6 py-4 font-medium text-gray-800">
                 {index + 1}
               </td>
-
               <td className="px-6 py-4">{item.firmName}</td>
               <td className="px-6 py-4">{item.cabType}</td>
-              <td className="px-6 py-4">{item.pricingRuleId}</td>
-              <td className="px-6 py-4 font-medium">₹{item.price}</td>
+<td className="px-6 py-4">
+  {item.pricingRuleName}
+</td>              <td className="px-6 py-4 font-medium">₹{item.price}</td>
 
               <td className="px-6 py-4">
                 <span

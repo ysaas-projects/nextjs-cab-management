@@ -12,7 +12,7 @@ type Props = {
     data: {
         id: number;
         firmId: number;
-        roleDetails: string;
+        ruleDetails: string;
         isActive: boolean;
     }[];
 };
@@ -44,7 +44,7 @@ const PricingRuleTable = ({ data }: Props) => {
                     <tr>
                         <th className="px-6 py-3">Sr. No.</th>
                         <th className="px-6 py-3">Firm ID</th>
-                        <th className="px-6 py-3">Role Details</th>
+                        <th className="px-6 py-3">Rule Details</th>
                         <th className="px-6 py-3">Active</th>
                         <th className="px-6 py-3 text-center">Action</th>
                     </tr>
@@ -61,7 +61,7 @@ const PricingRuleTable = ({ data }: Props) => {
                                 {index + 1}
                             </td>
                             <td className="px-6 py-4">{item.firmId}</td>
-                            <td className="px-6 py-4">{item.roleDetails}</td>
+                            <td className="px-6 py-4">{item.ruleDetails}</td>
                             <td className="px-6 py-4">{item.isActive ? "Yes" : "No"}</td>
                             <td className="px-6 py-4 text-center space-x-2">
                                 <Link href={`/pricing-rules/edit/${item.id}`}>

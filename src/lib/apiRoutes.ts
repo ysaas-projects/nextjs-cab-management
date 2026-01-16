@@ -26,6 +26,7 @@ FIRMS:"/Firms",
     SELLING_PRICES: "/selling-prices",
     ORDERS: "/orders",
     CABS:"/Cabs",
-    PRICING_RULES: "/PricingRules"
+    PRICING_RULES: "/PricingRules",
     // PRODUCT_DETAILS: (id: number) => `/products/${id}/details`,
+   
 };

@@ -30,7 +30,7 @@ export default function PricingRules() {
     const transformedData = paginatedData.map((rule) => ({
         id: rule.pricingRuleId,
         firmId: rule.firmId,
-        roleDetails: rule.roleDetails,
+        ruleDetails: rule.ruleDetails,
         isActive: rule.isActive,
     }));
 

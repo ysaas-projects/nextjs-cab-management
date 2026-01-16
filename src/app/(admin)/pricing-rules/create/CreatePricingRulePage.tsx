@@ -17,7 +17,7 @@ export default function CreatePricingRulePage() {
 
     const [form, setForm] = useState({
         firmId: "",
-        roleDetails: "",
+        ruleDetails: "",
         isActive: true,
     });
 
@@ -118,15 +118,15 @@ export default function CreatePricingRulePage() {
                         <div className="mt-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Role Details</label>
                             <textarea
-                                name="roleDetails"
-                                value={form.roleDetails}
+                                name="ruleDetails"
+                                value={form.ruleDetails}
                                 onChange={handleChange}
                                 rows={4}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Enter role details..."
                             />
-                            {errors.roleDetails && (
-                                <p className="mt-1 text-sm text-red-600">{errors.roleDetails}</p>
+                            {errors.ruleDetails && (
+                                <p className="mt-1 text-sm text-red-600">{errors.ruleDetails}</p>
                             )}
                         </div>
                     </section>

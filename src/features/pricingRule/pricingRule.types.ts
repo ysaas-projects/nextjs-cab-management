@@ -2,20 +2,20 @@
 
 export interface CreatePricingRulePayload {
     firmId: number;
-    roleDetails: string; // Assuming it's a JSON string or object
+    ruleDetails: string; // Assuming it's a JSON string or object
     isActive: boolean;
 }
 
 export interface UpdatePricingRulePayload {
     firmId?: number;
-    roleDetails?: string;
+    ruleDetails?: string;
     isActive?: boolean;
 }
 
 export interface PricingRule {
     pricingRuleId: number;
     firmId: number;
-    roleDetails: string;
+    ruleDetails: string;
     isActive: boolean;
     isDeleted: boolean;
     createdAt: string;

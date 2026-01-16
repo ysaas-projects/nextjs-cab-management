@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const pricingRuleSchema = z.object({
     firmId: z.number().min(1, "Firm is required"),
-    roleDetails: z.string().min(1, "Role details are required"),
+    ruleDetails: z.string().min(1, "Role details are required"),
     isActive: z.boolean(),
 });
 

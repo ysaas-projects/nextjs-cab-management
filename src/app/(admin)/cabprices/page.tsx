@@ -38,6 +38,7 @@ export default function CabPrices() {
     firmName: p.firmName,
     cabType: p.cabType,
     pricingRuleId: p.pricingRuleId,
+    pricingRuleName:p.pricingRuleName,
     price: p.price,
     isActive: p.isActive,
     createdAt: p.createdAt,

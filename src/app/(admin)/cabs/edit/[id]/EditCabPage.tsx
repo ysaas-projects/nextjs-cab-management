@@ -1,104 +1,149 @@
 "use client";
 
-import CustomInput from "@/components/atoms/CustomInput";
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useGetCabByIdQuery, useUpdateCabMutation } from "@/features/cab";
-import { updateCabSchema } from "@/features/cab";
-import { enqueueSnackbar } from "notistack";
+import CustomInput from "@/components/atoms/CustomInput";
 import Button from "@/components/atoms/Button";
+import { enqueueSnackbar } from "notistack";
+
+import {
+    useGetCabByIdQuery,
+    useUpdateCabMutation,
+} from "@/features/cab/cabApi";
 
 export default function EditCabPage() {
     const router = useRouter();
     const params = useParams();
-    const [updateCab] = useUpdateCabMutation();
 
-    const cabId = parseInt(Array.isArray(params.id) ? params.id[0] : params.id || "0", 10);
+    const cabId = Number(params.id);
 
-    const { data: cab, isLoading, isError } = useGetCabByIdQuery(cabId, { skip: !cabId });
+    const { data: cab, isLoading, isError } = useGetCabByIdQuery(cabId, {
+        skip: !cabId || Number.isNaN(cabId),
+    });
 
-    const [form, setForm] = useState({ firmId: "", cabType: "", isActive: true });
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [updateCab, { isLoading: isUpdating }] =
+        useUpdateCabMutation();
+
+    const [form, setForm] = useState({
+        cabType: "",
+        isActive: true,
+    });
+
     const [formError, setFormError] = useState<string | null>(null);
 
+    /* ---------------- Populate form ---------------- */
     useEffect(() => {
-        if (cab && !isLoading) {
-            setForm({ firmId: (cab as any).firmId?.toString() ?? "", cabType: (cab as any).cabType ?? "", isActive: (cab as any).isActive ?? true });
+        if (cab) {
+            setForm({
+                cabType: cab.cabType ?? "",
+                isActive: cab.isActive ?? true,
+            });
         }
-    }, [cab, isLoading]);
+    }, [cab]);
 
+    /* ---------------- Handlers ---------------- */
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type } = e.target;
-        if (type === "checkbox") {
-            setForm({ ...form, [name]: (e.target as HTMLInputElement).checked });
-        } else {
-            setForm({ ...form, [name]: value });
-        }
+        const { name, value, type, checked } = e.target;
+
+        setForm((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
     };
 
     const handleSave = async () => {
-        setErrors({});
         setFormError(null);
 
-        const parsed = updateCabSchema.safeParse({
-            cabId,
-            firmId: parseInt(form.firmId || "0"),
-            cabType: form.cabType,
-            isActive: form.isActive,
-        });
-
-        if (!parsed.success) {
-            const fieldErrors: Record<string, string> = {};
-            parsed.error.issues.forEach((issue) => {
-                const field = issue.path[0] as string;
-                fieldErrors[field] = issue.message;
-            });
-            setErrors(fieldErrors);
-            setFormError("Please fix the errors below and try again.");
-            return;
-        }
-
         try {
-            const payload = { ...parsed.data };
-            const response = await updateCab(payload).unwrap();
-            enqueueSnackbar("Cab updated successfully", { variant: "success" });
+            await updateCab({
+                cabId,
+                cabType: form.cabType,
+                isActive: form.isActive,
+            }).unwrap();
+
+            enqueueSnackbar("Cab updated successfully", {
+                variant: "success",
+            });
+
             router.push(`/cabs/${cabId}`);
         } catch (err: any) {
-            console.error(err);
-            setFormError(err?.data?.message || "Failed to update cab");
+            setFormError(
+                err?.data?.message ||
+                    "Something went wrong while updating the cab."
+            );
         }
     };
 
     if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading cab.</div>;
+    if (isError || !cab) return <div>Cab not found.</div>;
 
     return (
-        <div className="mx-auto max-w-6xl px-6 py-8">
+        <div className="mx-auto max-w-4xl px-6 py-8">
+            {/* Header */}
             <div className="mb-6">
-                <h1 className="text-2xl font-semibold text-gray-900">Edit Cab</h1>
-                <p className="text-sm text-gray-500">Update cab information</p>
+                <h1 className="text-2xl font-semibold text-gray-900">
+                    Edit Cab
+                </h1>
+                <p className="text-sm text-gray-500">
+                    Update cab information
+                </p>
             </div>
 
+            {/* Card */}
             <div className="rounded-xl border bg-white shadow-sm">
-                <div className="space-y-10 p-6">
+                <div className="space-y-8 p-6">
                     {formError && (
-                        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-600">{formError}</div>
+                        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                            {formError}
+                        </div>
                     )}
 
+                    {/* Cab Info */}
                     <section>
+                        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-700">
+                            Cab Information
+                        </h3>
+
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <CustomInput label="Firm ID" name="firmId" type="number" value={form.firmId} onChange={handleChange} error={errors.firmId} />
-                            <CustomInput label="Cab Type" name="cabType" value={form.cabType} onChange={handleChange} error={errors.cabType} />
-                            <div className="flex items-center md:col-span-2">
-                                <input type="checkbox" name="isActive" checked={form.isActive} onChange={handleChange} className="mr-2" />
-                                <label className="text-sm font-medium text-gray-700">Is Active</label>
-                            </div>
+                            <CustomInput
+                                label="Cab Type"
+                                name="cabType"
+                                value={form.cabType}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        {/* IsActive checkbox */}
+                        <div className="mt-4 flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                name="isActive"
+                                checked={form.isActive}
+                                onChange={handleChange}
+                                className="h-4 w-4 rounded border-gray-300"
+                            />
+                            <label className="text-sm font-medium text-gray-700">
+                                IsActive
+                            </label>
                         </div>
                     </section>
 
+                    {/* Actions */}
                     <div className="flex justify-end gap-3 border-t pt-6">
-                        <Button variant="default" onClick={() => history.back()}>Cancel</Button>
-                        <Button variant="primary" onClick={handleSave}>Save Cab</Button>
+                        <Button
+                            variant="default"
+                            onClick={() => history.back()}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            variant="primary"
+                            onClick={handleSave}
+                            isLoading={isUpdating}
+                        >
+                            Save Cab
+                        </Button>
                     </div>
                 </div>
             </div>

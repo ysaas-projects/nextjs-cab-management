@@ -10,7 +10,7 @@ export interface CabPrice {
   cabType: string;       // ✅ NEW (backend)
 
   pricingRuleId: number; // ✅ match backend name
-
+  pricingRuleName:string;
   price: number;
   isActive: boolean;
 

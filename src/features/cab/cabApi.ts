@@ -7,6 +7,46 @@ import { api } from "@/store/api";
 export const cabApi = api.injectEndpoints({
   endpoints: (builder) => ({
 
+
+    // =====================
+    // GET PAGINATED CABS
+    // =====================
+    getPaginatedCabs: builder.query<
+    {
+        totalCount: number;
+        pageSize: number;
+        currentPage: number;
+        totalPages: number;
+        items: Cab[];
+    },
+    { pageNumber: number; pageSize: number; search?: string; isActive?: boolean }
+    >({
+    query: ({ pageNumber, pageSize, search, isActive }) => {
+        const params = new URLSearchParams({
+        pageNumber: pageNumber.toString(),
+        pageSize: pageSize.toString(),
+        });
+
+        if (search) params.append("search", search);
+        if (isActive !== undefined)
+        params.append("isActive", String(isActive));
+
+        return `${API_ROUTES.CABS}/paginated?${params.toString()}`;
+    },
+    transformResponse: (res: ApiResponse<any>) => res.data,
+    providesTags: (result) =>
+  result
+    ? [
+        ...result.items.map((cab) => ({
+          type: "Cab" as const,
+          id: cab.cabId,
+        })),
+        { type: "Cab", id: "LIST" },
+      ]
+    : [{ type: "Cab", id: "LIST" }],
+    }),
+
+
     // =====================
     // GET ALL CABS
     // =====================
@@ -28,28 +68,27 @@ export const cabApi = api.injectEndpoints({
     // =====================
     // CREATE CAB
     // =====================
-    createCab: builder.mutation<Cab, Partial<Cab>>({
-      query: (payload) => ({
-        url: API_ROUTES.CABS,
-        method: "POST",
-        body: payload,
-      }),
-      transformResponse: (res: ApiResponse<Cab>) => res.data,
-      invalidatesTags: ["Cab"],
-    }),
+    createCab: builder.mutation<any, { cabType: string; isActive: boolean }>({
+  query: (payload) => ({
+    url: API_ROUTES.CABS,
+    method: "POST",
+    body: payload, 
+  }),
+  transformResponse: (res: ApiResponse<any>) => res.data,
+  invalidatesTags: ["Cab"],
+}),
 
     // =====================
     // UPDATE CAB
     // =====================
-    updateCab: builder.mutation<Cab, Partial<Cab>>({
-      query: (payload) => ({
-        url: `${API_ROUTES.CABS}/${payload.cabId}`,
-        method: "PUT",
-        body: payload,
-      }),
+updateCab: builder.mutation<any, { cabId: number; cabType?: string; isActive?: boolean }>({
+  query: ({ cabId, ...body }) => ({
+    url: `${API_ROUTES.CABS}/${cabId}`,
+    method: "PUT",
+    body,
+  }),
       transformResponse: (res: ApiResponse<Cab>) => res.data,
-      invalidatesTags: (result) =>
-        result ? [{ type: "Cab", id: result.cabId }] : ["Cab"],
+      invalidatesTags: [{ type: "Cab", id: "LIST" }],
     }),
 
     // =====================
@@ -67,6 +106,7 @@ export const cabApi = api.injectEndpoints({
 
 export const {
   useGetCabsQuery,
+  useGetPaginatedCabsQuery,
   useGetCabByIdQuery,
   useCreateCabMutation,
   useUpdateCabMutation,

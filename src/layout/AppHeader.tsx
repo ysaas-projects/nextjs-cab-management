@@ -138,7 +138,7 @@ const AppHeader: React.FC = () => {
 
           <div className="hidden lg:block">
             <div className="relative">
-              <h2 className="text-xl dark:text-white">Epic Sugar {formattedRoles}</h2>
+              <h2 className="text-xl dark:text-white">Cab-Management {formattedRoles}</h2>
             </div>
           </div>
         </div>

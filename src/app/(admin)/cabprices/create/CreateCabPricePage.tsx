@@ -12,12 +12,14 @@ import { enqueueSnackbar } from "notistack";
 import { useCreateCabPriceMutation } from "@/features/cabprice";
 import { useGetFirmsQuery } from "@/features/firm/firmApi";
 import { useGetCabsQuery } from "@/features/cab";
+import { useGetPricingRulesQuery } from "@/features/pricingRule";
 
 export default function CreateCabPricePage() {
   const router = useRouter();
 
   const { data: firms = [] } = useGetFirmsQuery();
   const { data: cabs = [] } = useGetCabsQuery();
+const { data: pricingRules = [] } = useGetPricingRulesQuery();
 
   const [createCabPrice, { isLoading }] = useCreateCabPriceMutation();
 
@@ -97,13 +99,16 @@ export default function CreateCabPricePage() {
             }))}
           />
 
-          <CustomInput
-            label="Pricing Rule ID"
-            name="pricingRuleId"
-            type="number"
-            value={form.pricingRuleId}
-            onChange={handleChange}
-          />
+          <CustomSelect
+  label="Pricing Rule"
+  name="pricingRuleId"
+  value={form.pricingRuleId}
+  onChange={handleChange}
+  options={pricingRules.map((r) => ({
+    id: r.pricingRuleId,      // backend la janar
+    name: r.ruleDetails,      // UI la disnar (pricingRuleName)
+  }))}
+/>
 
           <CustomInput
             label="Price"

@@ -55,7 +55,7 @@ export default function PricingRuleDetailPage() {
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700">Role Details</label>
-                            <p className="mt-1 text-lg font-semibold whitespace-pre-wrap">{pricingRule.roleDetails}</p>
+                            <p className="mt-1 text-lg font-semibold whitespace-pre-wrap">{pricingRule.ruleDetails}</p>
                         </div>
                         {pricingRule.updatedAt && (
                             <div>

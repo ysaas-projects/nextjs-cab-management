@@ -8,6 +8,7 @@ import Button from "@/components/atoms/Button";
 import CustomInput from "@/components/atoms/CustomInput";
 import CustomSelect from "@/components/atoms/CustomSelect";
 import { enqueueSnackbar } from "notistack";
+import { useGetPricingRulesQuery } from "@/features/pricingRule";
 
 import {
   useGetCabPricesQuery,
@@ -24,6 +25,7 @@ export default function EditCabPricePage() {
   const { data: cabPrices = [] } = useGetCabPricesQuery();
   const { data: firms = [] } = useGetFirmsQuery();
   const { data: cabs = [] } = useGetCabsQuery();
+const { data: pricingRules = [] } = useGetPricingRulesQuery();
 
   const [updateCabPrice, { isLoading }] = useUpdateCabPriceMutation();
 
@@ -118,14 +120,16 @@ export default function EditCabPricePage() {
 
           />
 
-          <CustomInput
-            label="Pricing Rule ID"
-            name="pricingRuleId"
-            type="number"
-            value={form.pricingRuleId}
-            onChange={handleChange}
-          />
-
+          <CustomSelect
+  label="Pricing Rule"
+  name="pricingRuleId"
+  value={form.pricingRuleId}
+  onChange={handleChange}
+  options={pricingRules.map((r) => ({
+    id: r.pricingRuleId,      // backend la janar
+    name: r.ruleDetails,      // UI la disnar (pricingRuleName)
+  }))}
+/>
           <CustomInput
             label="Price"
             name="price"
