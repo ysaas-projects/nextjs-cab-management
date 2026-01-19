@@ -65,7 +65,7 @@ export default function PaymentSlipPage() {
                 <td>
                   <b>Delivery Details</b><br />
                   Driver: {slip.driverName || "N/A"}<br />
-                  Mobile: {slip.mobileNumber || "N/A"}<br />
+                  Mobile: {slip.MobileNumber || "N/A"}<br />
                   Vehicle: {slip.vehicleNumber || "N/A"}<br />
                   Type: {slip.vehicleType || "N/A"}
                 </td>

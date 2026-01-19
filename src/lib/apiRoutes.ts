@@ -5,7 +5,9 @@ export const API_ROUTES = {
     LOGIN: "/auth/login",
     LOGOUT: "/auth/logout",
   },
-
+  FIRMS:"/Firms",
+  FIRM_DETAILS: "/FirmDetails",
+  
   // Add Authebntication routes here in the future
   MILLS: "/mills",
   MILL_DETAILS: (id: number) => `/mills/mill-details/${id}`,
@@ -22,6 +24,9 @@ export const API_ROUTES = {
     SELLING_PRICES: "/selling-prices",
     ORDERS: "/orders",
     CABS:"/Cabs",
-    PRICING_RULES: "/PricingRules"
+    PRICING_RULES: "/PricingRules",
     // PRODUCT_DETAILS: (id: number) => `/products/${id}/details`,
+   FIRM_TERMS: "/FirmTerms", // ✅ KEEP ONLY THIS
+   DRIVER_DETAILS:"/DriverDetails",
+
 };

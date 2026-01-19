@@ -96,8 +96,8 @@ export interface User {
     firmType: string;
     userName: string;
     email: string | null;
-    mobileNumber: string | null;
-    mobileNumberConfirmed: boolean;
+    MobileNumber: string | null;
+    MobileNumberConfirmed: boolean;
     isActive: boolean;
     lastLoginAt: string | null;
     createdAt: string;

@@ -42,7 +42,7 @@ export default function BuyPage() {
                 status: "Pending",
 
                 driverName,
-                mobileNumber: mobile,
+                MobileNumber: mobile,
                 vehicleNumber,
                 vehicleType,
             };

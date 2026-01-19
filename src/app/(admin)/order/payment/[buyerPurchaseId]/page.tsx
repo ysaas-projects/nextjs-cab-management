@@ -62,7 +62,7 @@ export default function PaymentPage() {
                 totalAmount: invoice.totalAmount,
 
                 driverName: invoice.driverName,
-                mobileNumber: invoice.buyerMobile,
+                MobileNumber: invoice.buyerMobile,
                 vehicleNumber: invoice.vehicleNumber,
                 vehicleType: "Truck",
 
