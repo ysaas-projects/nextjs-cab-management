@@ -5,7 +5,7 @@
 // =======================
 
 export interface CreateDriverDetailPayload {
-  userId: number;
+  // userId: number;
   driverName: string;
   mobileNumber: string;
   isActive?: boolean;
@@ -13,11 +13,11 @@ export interface CreateDriverDetailPayload {
 
 export interface UpdateDriverDetailPayload {
   driverDetailId: number;
-  userId: number;
+  // userId: number;
   driverName: string;
   mobileNumber?: string;
   isActive?: boolean;
-  isDeleted?: boolean;
+  // isDeleted?: boolean;
 }
 
 // =======================
@@ -26,8 +26,8 @@ export interface UpdateDriverDetailPayload {
 
 export interface DriverDetail {
   driverDetailId: number;
-  firmId?: number | null;
-  userId?: number | null;
+  // firmId?: number | null;
+  // userId?: number | null;
   driverName?: string | null;
   mobileNumber?: string | null;
   isActive?: boolean | null;

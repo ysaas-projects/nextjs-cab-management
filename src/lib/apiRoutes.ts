@@ -27,6 +27,6 @@ export const API_ROUTES = {
     PRICING_RULES: "/PricingRules",
     // PRODUCT_DETAILS: (id: number) => `/products/${id}/details`,
    FIRM_TERMS: "/FirmTerms", // ✅ KEEP ONLY THIS
-   DRIVER_DETAILS:"/DriverDetails",
-
+   DRIVER_DETAILS:"/driverdetails",
+    
 };

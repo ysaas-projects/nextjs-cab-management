@@ -6,8 +6,6 @@ import ComponentCard from "@/components/common/ComponentCard";
 import Button from "@/components/atoms/Button";
 import Link from "next/link";
 import DriverDetailsTable from "./table";
-import RequireRole from "@/components/auth/RequireRole";
-import { ROLES } from "@/constants/roles";
 
 export default function DriverDetailsPage() {
   const { data, isLoading, isError } = useGetDriverDetailsQuery();
@@ -24,8 +22,7 @@ export default function DriverDetailsPage() {
     })) ?? [];
 
   return (
-    <RequireRole allowedRoles={[ROLES.SUPER_ADMIN]}>
-
+    <>
       <PageBreadcrumb pageTitle="Manage Driver Details" />
 
       <div className="space-y-6">
@@ -33,7 +30,7 @@ export default function DriverDetailsPage() {
           title="Driver Details List"
           desc={`Total ${tableData.length} drivers found`}
           action={
-            <Link href="/admin/driverdetails/create">
+            <Link href="/driverdetails/create">
               <Button variant="primary" size="sm">
                 + Add Driver
               </Button>
@@ -43,6 +40,6 @@ export default function DriverDetailsPage() {
           <DriverDetailsTable data={tableData} />
         </ComponentCard>
       </div>
-    </RequireRole>
+    </>
   );
 }

@@ -1,6 +1,8 @@
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
 import Link from "next/link";
+import { useDeleteDriverDetailMutation } from "@/features/driverdetail";
+import { enqueueSnackbar } from "notistack";
 
 type Props = {
   data: {
@@ -12,6 +14,27 @@ type Props = {
 };
 
 const DriverDetailsTable = ({ data }: Props) => {
+  const [deleteDriver] = useDeleteDriverDetailMutation();
+
+const handleDelete = async (id: number) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this driver?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await deleteDriver(id).unwrap();
+
+    enqueueSnackbar("Driver deleted successfully", {
+      variant: "success",
+    });
+  } catch {
+    enqueueSnackbar("Failed to delete driver", {
+      variant: "error",
+    });
+  }
+};
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
       <table className="min-w-full text-sm text-left text-gray-600">
@@ -44,17 +67,26 @@ const DriverDetailsTable = ({ data }: Props) => {
               <td className="px-6 py-4">{item.status}</td>
 
               <td className="px-6 py-4 text-center space-x-2">
-                <Link href={`/admin/driverdetails/edit/${item.id}`}>
-                  <Button
-                    size="xs"
-                    variant="primary"
-                    outline
-                    startIcon={<Icon name="PencilIcon" className="w-5 h-5" />}
-                  >
-                    Edit
-                  </Button>
-                </Link>
-              </td>
+     <Link href={`/driverdetails/edit/${item.id}`}>
+      <Button
+      size="xs"
+      variant="primary"
+      outline
+      >
+      Edit
+      </Button>
+     </Link>
+
+    <Button
+    size="xs"
+    variant="danger"
+    outline
+    onClick={() => handleDelete(item.id)}
+    >
+    Delete
+    </Button>
+    </td>
+
             </tr>
           ))}
         </tbody>

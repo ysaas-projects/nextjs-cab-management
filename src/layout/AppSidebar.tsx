@@ -22,7 +22,11 @@ const navItems: NavItem[] = [
   { icon: <Icon name="BoxCubeIcon" />, name: "Pricing Rules", path: "/pricing-rules"},
     { icon: <Icon name="BoxCubeIcon" />, name: "Firm", path: "/firms" },
     { icon: <Icon name="BoxCubeIcon" />, name: "FirmTerms", path: "/firmTerms" },
-    { icon: <Icon name="BoxCubeIcon" />, name: "DriverDetails", path: "/DriverDetail" },
+  { 
+  icon: <Icon name="BoxCubeIcon" />, 
+  name: "DriverDetails", 
+  path: "/driverdetails" 
+  },
 
 
 
