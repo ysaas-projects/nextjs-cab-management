@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Swal from "sweetalert2";
-import { enqueueSnackbar } from "notistack";
+import { enqueueSnackbar, closeSnackbar } from "notistack";
 
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
@@ -20,51 +19,52 @@ type Props = {
 };
 
 const CabTable = ({ data }: Props) => {
-  const [deleteCab, { isLoading }] = useDeleteCabMutation();
+  const [deleteCab] = useDeleteCabMutation();
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  /* ============ DELETE HANDLER (SweetAlert) ============ */
-  const handleDelete = async (id: number) => {
-    const result = await Swal.fire({
-      title: "Delete Cab?",
-      text: "This cab will be permanently deleted.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, delete it",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
+  /* ============ DELETE HANDLER (SNACKBAR ONLY) ============ */
+  const handleDelete = (id: number) => {
+    enqueueSnackbar("Are you sure you want to delete this cab?", {
+      variant: "warning",
+      persist: true,
+      action: (snackbarId) => (
+        <div className="flex gap-2">
+          <Button
+            size="xs"
+            variant="danger"
+            isLoading={deletingId === id}
+            onClick={async () => {
+              try {
+                setDeletingId(id);
+                await deleteCab(id).unwrap();
+
+                enqueueSnackbar("Cab deleted successfully", {
+                  variant: "success",
+                });
+              } catch (err: any) {
+                enqueueSnackbar(
+                  err?.data?.message || "Failed to delete cab",
+                  { variant: "error" }
+                );
+              } finally {
+                setDeletingId(null);
+                closeSnackbar(snackbarId);
+              }
+            }}
+          >
+            Delete
+          </Button>
+
+          <Button
+            size="xs"
+            variant="default"
+            onClick={() => closeSnackbar(snackbarId)}
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
-
-    if (!result.isConfirmed) return;
-
-    try {
-      setDeletingId(id);
-      await deleteCab(id).unwrap();
-
-      await Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: "Cab deleted successfully.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Delete Failed",
-        text: err?.data?.message || "Failed to delete cab",
-      });
-
-      enqueueSnackbar(
-        err?.data?.message || "Failed to delete cab",
-        { variant: "error" }
-      );
-    } finally {
-      setDeletingId(null);
-    }
   };
 
   /* ============ TABLE ============ */
@@ -99,9 +99,7 @@ const CabTable = ({ data }: Props) => {
                 </Link>
               </td>
 
-              <td className="px-6 py-4">
-                {item.firmName}
-              </td>
+              <td className="px-6 py-4">{item.firmName}</td>
 
               <td className="px-6 py-4">
                 <span
@@ -124,10 +122,7 @@ const CabTable = ({ data }: Props) => {
                     variant="primary"
                     outline
                     startIcon={
-                      <Icon
-                        name="PencilIcon"
-                        className="w-5 h-5"
-                      />
+                      <Icon name="PencilIcon" className="w-5 h-5" />
                     }
                   >
                     Edit
@@ -140,12 +135,9 @@ const CabTable = ({ data }: Props) => {
                   variant="danger"
                   outline
                   onClick={() => handleDelete(item.id)}
-                  disabled={isLoading && deletingId === item.id}
+                  disabled={deletingId === item.id}
                   startIcon={
-                    <Icon
-                      name="TrashBinIcon"
-                      className="w-5 h-5"
-                    />
+                    <Icon name="TrashBinIcon" className="w-5 h-5" />
                   }
                 >
                   Delete
@@ -153,6 +145,14 @@ const CabTable = ({ data }: Props) => {
               </td>
             </tr>
           ))}
+
+          {data.length === 0 && (
+            <tr>
+              <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                No cabs found.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

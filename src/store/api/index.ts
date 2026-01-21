@@ -17,12 +17,11 @@ export const api = createApi({
         "Cab",
         "PricingRule",
         "PricingRule",
-        "Firms",
-        "FirmTerms",
+        "FirmTerm",
         "DriverDetail",
         "Users",
         "CabPrices",
-        "FirmTerm"
+        "Firms",
 
     ],
     endpoints: () => ({}),

@@ -9,6 +9,7 @@ import DriverDetailsTable from "./table";
 
 export default function DriverDetailsPage() {
   const { data, isLoading, isError } = useGetDriverDetailsQuery();
+  console.log("API response:", data);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading driver details.</div>;
@@ -18,6 +19,8 @@ export default function DriverDetailsPage() {
       id: driver.driverDetailId,
       driverName: driver.driverName ?? "-",
       mobileNumber: driver.mobileNumber ?? "-",
+      firmName: driver.firmName ?? driver?.firmName ?? "-",
+      userName: driver.userName ?? driver?.userName ?? "-",
       status: driver.isActive ? "Active" : "Inactive",
     })) ?? [];
 

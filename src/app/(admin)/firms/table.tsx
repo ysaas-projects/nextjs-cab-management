@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Swal from "sweetalert2";
-import { enqueueSnackbar } from "notistack";
+import { enqueueSnackbar, closeSnackbar } from "notistack";
 
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
@@ -15,48 +14,52 @@ type Props = {
 };
 
 const FirmTable = ({ data }: Props) => {
-  const [deleteFirm, { isLoading }] = useDeleteFirmMutation();
+  const [deleteFirm] = useDeleteFirmMutation();
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  /* ============ DELETE HANDLER ============ */
-  const handleDelete = async (firmId: number) => {
-    const result = await Swal.fire({
-      title: "Delete Firm?",
-      text: "This firm will be permanently deleted.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, delete it",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
+  /* ============ DELETE HANDLER (SNACKBAR ONLY) ============ */
+  const handleDelete = (firmId: number) => {
+    enqueueSnackbar("Are you sure you want to delete this firm?", {
+      variant: "warning",
+      persist: true,
+      action: (snackbarId) => (
+        <div className="flex gap-2">
+          <Button
+            size="xs"
+            variant="danger"
+            isLoading={deletingId === firmId}
+            onClick={async () => {
+              try {
+                setDeletingId(firmId);
+                await deleteFirm(firmId).unwrap();
+
+                enqueueSnackbar("Firm deleted successfully", {
+                  variant: "success",
+                });
+              } catch (err: any) {
+                enqueueSnackbar(
+                  err?.data?.message || "Failed to delete firm",
+                  { variant: "error" }
+                );
+              } finally {
+                setDeletingId(null);
+                closeSnackbar(snackbarId);
+              }
+            }}
+          >
+            Delete
+          </Button>
+
+          <Button
+            size="xs"
+            variant="default"
+            onClick={() => closeSnackbar(snackbarId)}
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
-
-    if (!result.isConfirmed) return;
-
-    try {
-      setDeletingId(firmId);
-      await deleteFirm(firmId).unwrap();
-
-      await Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: "Firm deleted successfully.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-    
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Delete Failed",
-        text: err?.data?.message || "Failed to delete firm",
-      });
-
-    } finally {
-      setDeletingId(null);
-    }
   };
 
   /* ============ TABLE ============ */
@@ -129,7 +132,7 @@ const FirmTable = ({ data }: Props) => {
                   variant="danger"
                   outline
                   onClick={() => handleDelete(item.firmId)}
-                  disabled={isLoading && deletingId === item.firmId}
+                  disabled={deletingId === item.firmId}
                   startIcon={
                     <Icon
                       name="TrashBinIcon"
@@ -142,6 +145,17 @@ const FirmTable = ({ data }: Props) => {
               </td>
             </tr>
           ))}
+
+          {data.length === 0 && (
+            <tr>
+              <td
+                colSpan={6}
+                className="px-6 py-4 text-center text-gray-500"
+              >
+                No firms found.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

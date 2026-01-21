@@ -5,6 +5,7 @@ export interface Firm {
   firmName: string;
   firmCode?: string;
   isActive: boolean;
+ 
 }
 
 export interface FirmDetails {
@@ -16,7 +17,9 @@ export interface FirmDetails {
   logoImagePath?: string | null;
   gstNumber?: string;
   isActive?: boolean;
+  
 }
+
 
 export interface ApiResponse<T> {
   success: boolean;

@@ -17,6 +17,7 @@ export default function FirmTermsPage() {
         id: t.firmTermId,
         srNo: index + 1,
         firmId: t.firmId,
+        firmName: t.firmName ?? "-", // ✅ ADD THIS
         description: t.description,
         isActive: t.isActive,
     }));

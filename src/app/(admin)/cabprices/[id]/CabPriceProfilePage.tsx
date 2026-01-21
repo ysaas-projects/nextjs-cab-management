@@ -33,16 +33,14 @@ export default function CabPriceProfilePage() {
         action={
           <Button
             variant="primary"
-            onClick={() =>
-              router.push(`/cabprices/edit/${cabPriceId}`)
-            }
+            size="sm"
+            onClick={() => router.push("/cabprices")}
           >
-            Edit
+            Back
           </Button>
         }
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-
           {/* Cab */}
           <div>
             <p className="text-gray-500">Cab</p>
@@ -88,13 +86,6 @@ export default function CabPriceProfilePage() {
               {new Date(cabPrice.createdAt).toLocaleDateString()}
             </p>
           </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3 mt-6">
-          <Button variant="default" onClick={() => router.back()}>
-            Back
-          </Button>
         </div>
       </ComponentCard>
     </>

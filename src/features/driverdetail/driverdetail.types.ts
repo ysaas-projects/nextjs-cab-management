@@ -9,6 +9,7 @@ export interface CreateDriverDetailPayload {
   driverName: string;
   mobileNumber: string;
   isActive?: boolean;
+  
 }
 
 export interface UpdateDriverDetailPayload {
@@ -26,10 +27,16 @@ export interface UpdateDriverDetailPayload {
 
 export interface DriverDetail {
   driverDetailId: number;
-  // firmId?: number | null;
-  // userId?: number | null;
+ 
   driverName?: string | null;
   mobileNumber?: string | null;
+   // ✅ ADD THESE
+  firmId?: number | null;
+  firmName?: string | null;
+
+  userId?: number | null;
+  userName?: string | null;
+
   isActive?: boolean | null;
   createdAt?: string;
   updatedAt?: string | null;
