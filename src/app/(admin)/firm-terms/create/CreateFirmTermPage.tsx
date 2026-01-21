@@ -20,7 +20,6 @@ export default function CreateFirmTermPage() {
     const [formError, setFormError] = useState<string | null>(null);
 
     const [form, setForm] = useState({
-        firmId: initialFirmId,
         description: "",
         isActive: true,
     });
@@ -41,7 +40,6 @@ export default function CreateFirmTermPage() {
 
         try {
             const payload = {
-                firmId: form.firmId,
                 description: form.description,
                 isActive: form.isActive,
             };
@@ -85,26 +83,7 @@ export default function CreateFirmTermPage() {
                             Firm Term Information
                         </h3>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <CustomSelect
-                                label="Firm"
-                                name="firmId"
-                                value={form.firmId || ""}
-                                onChange={(e) =>
-                                    setForm((prev) => ({
-                                        ...prev,
-                                        firmId: Number(e.target.value) || 0,
-                                    }))
-                                }
-                                options={
-                                    firms?.map((f) => ({
-                                        id: f.firmId,
-                                        name: `${f.firmName} (${f.firmCode})`,
-                                    })) || []
-                                }
-                            />
-                        </div>
-
+                        
                         <div className="mt-4">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Description

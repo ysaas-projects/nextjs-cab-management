@@ -1,7 +1,6 @@
-//pricing-rules/page.tsx
-
 "use client";
 
+// pricing-rules/page.tsx
 import { useState } from "react";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -13,53 +12,54 @@ import { useGetPricingRulesQuery } from "@/features/pricingRule/pricingRuleApi";
 import { PricingRule } from "@/features/pricingRule/pricingRule.types";
 
 export default function PricingRules() {
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-    const { data, isLoading, isError } = useGetPricingRulesQuery();
+  const { data, isLoading, isError } =
+    useGetPricingRulesQuery();
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading pricing rules.</div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading pricing rules.</div>;
 
-    // ✅ Correct access
-    const pricingRules: PricingRule[] = data ?? [];
-    const totalPages = Math.ceil(pricingRules.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = pricingRules.slice(startIndex, startIndex + itemsPerPage);
+  // ✅ API already returns array
+  const pricingRules: PricingRule[] = data ?? [];
 
-    const transformedData = paginatedData.map((rule) => ({
-        id: rule.pricingRuleId,
-        firmId: rule.firmId,
-        ruleDetails: rule.ruleDetails,
-        isActive: rule.isActive,
-    }));
+  const totalPages = Math.ceil(
+    pricingRules.length / itemsPerPage
+  );
+  const startIndex = (currentPage - 1) * itemsPerPage;
 
-    return (
-        <>
-            <PageBreadcrumb pageTitle="Manage Pricing Rules" />
+  const paginatedData = pricingRules.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
-            <div className="space-y-6">
-                <ComponentCard
-                    title="Pricing Rule List"
-                    desc={`Total ${pricingRules.length} records found.`}
-                    action={
-                        <Link href="/pricing-rules/create">
-                            <Button variant="primary" size="sm">
-                                + Add Pricing Rule
-                            </Button>
-                        </Link>
-                    }
-                >
-                    {/* add dynamic data */}
-                    <PricingRuleTable data={transformedData} />
+  return (
+    <>
+      <PageBreadcrumb pageTitle="Manage Pricing Rules" />
 
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
-                </ComponentCard>
-            </div>
-        </>
-    );
+      <div className="space-y-6">
+        <ComponentCard
+          title="Pricing Rule List"
+          desc={`Total ${pricingRules.length} records found.`}
+          action={
+            <Link href="/pricing-rules/create">
+              <Button variant="primary" size="sm">
+                + Add Pricing Rule
+              </Button>
+            </Link>
+          }
+        >
+          {/* ✅ PASS DIRECT DATA */}
+          <PricingRuleTable data={paginatedData} />
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </ComponentCard>
+      </div>
+    </>
+  );
 }

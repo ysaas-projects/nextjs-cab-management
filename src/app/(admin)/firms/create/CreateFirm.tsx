@@ -22,8 +22,10 @@ export default function CreateFirmPage() {
     contactNumber: "",
     contactPerson: "",
     gstNumber: "",
-    logoImagePath: "",
   });
+
+  // 🔹 logo file (UI only)
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -36,6 +38,13 @@ export default function CreateFirmPage() {
     }));
   };
 
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLogoFile(file);
+  };
+
   const handleSave = async () => {
     setFormError(null);
 
@@ -45,7 +54,10 @@ export default function CreateFirmPage() {
     }
 
     try {
-      await createFirm(form).unwrap();
+      await createFirm({
+        ...form,
+        logoImagePath: "", // ✅ backend expects string, upload later
+      }).unwrap();
 
       enqueueSnackbar("Firm created successfully", {
         variant: "success",
@@ -118,12 +130,29 @@ export default function CreateFirmPage() {
           onChange={handleChange}
         />
 
-        <CustomInput
-          label="Logo Image Path"
-          name="logoImagePath"
-          value={form.logoImagePath}
-          onChange={handleChange}
-        />
+        {/* ✅ Logo file select */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Firm Logo
+          </label>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleLogoChange}
+            className="block w-full text-sm text-gray-700
+              file:mr-4 file:rounded file:border-0
+              file:bg-blue-50 file:px-4 file:py-2
+              file:text-sm file:font-medium
+              file:text-blue-700 hover:file:bg-blue-100"
+          />
+
+          {logoFile && (
+            <p className="mt-1 text-xs text-gray-500">
+              Selected: {logoFile.name}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-end gap-3 mt-8">

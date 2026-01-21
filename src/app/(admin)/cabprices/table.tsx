@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+import Swal from "sweetalert2";
+import { enqueueSnackbar } from "notistack";
+
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
-import Link from "next/link";
-import { enqueueSnackbar } from "notistack";
 import { useDeleteCabPriceMutation } from "@/features/cabprice";
-import { useState } from "react";
 
 /* ================= PROPS ================= */
 export interface CabPricesTableProps {
@@ -25,28 +27,49 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
   const [deleteCabPrice, { isLoading }] = useDeleteCabPriceMutation();
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
+  /* ============ DELETE HANDLER (SweetAlert) ============ */
   const handleDelete = async (id: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this cab price?"
-    );
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: "Delete Cab Price?",
+      text: "This cab price will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       setDeletingId(id);
       await deleteCabPrice(id).unwrap();
-      enqueueSnackbar("Cab price deleted successfully", {
-        variant: "success",
+
+      await Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Cab price deleted successfully.",
+        timer: 1500,
+        showConfirmButton: false,
       });
+
+     
     } catch (err: any) {
-      enqueueSnackbar(
-        err?.data?.message || "Failed to delete cab price",
-        { variant: "error" }
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Delete Failed",
+        text: err?.data?.message || "Failed to delete cab price",
+      });
+
+     
     } finally {
       setDeletingId(null);
     }
   };
 
+  /* ============ EMPTY STATE ============ */
   if (data.length === 0) {
     return (
       <div className="border rounded p-6 text-center text-gray-500">
@@ -55,6 +78,7 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
     );
   }
 
+  /* ============ TABLE ============ */
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
       <table className="min-w-full text-sm text-left text-gray-600">

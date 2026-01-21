@@ -14,7 +14,6 @@ export default function EditPricingRulePage() {
     const [updatePricingRule] = useUpdatePricingRuleMutation();
 
     const [form, setForm] = useState({
-        firmId: "",
         ruleDetails: "",
         isActive: true,
     });
@@ -41,7 +40,6 @@ export default function EditPricingRulePage() {
 
         const result = pricingRuleSchema.safeParse({
             ...form,
-            firmId: parseInt(form.firmId),
         });
 
         if (!result.success) {
@@ -85,7 +83,6 @@ export default function EditPricingRulePage() {
         if (pricingRule && !isLoading) {
             console.log("Updating form with pricing rule data", pricingRule);
             setForm({
-                firmId: pricingRule.firmId.toString(),
                 ruleDetails: pricingRule.ruleDetails,
                 isActive: pricingRule.isActive,
             });
@@ -121,14 +118,14 @@ export default function EditPricingRulePage() {
                         </h3>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <CustomInput
+                            {/* <CustomInput
                                 label="Firm ID"
                                 name="firmId"
                                 type="number"
                                 value={form.firmId}
                                 onChange={handleChange}
                                 error={errors.firmId}
-                            />
+                            /> */}
                             <div className="flex items-center">
                                 <input
                                     type="checkbox"

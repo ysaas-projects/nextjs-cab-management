@@ -3,6 +3,7 @@
 export interface FirmTerm {
   firmTermId: number;
   firmId: number;
+  FirmName:string;
   description: string;
   isActive: boolean;
   isDeleted: boolean;
@@ -11,13 +12,11 @@ export interface FirmTerm {
 }
 
 export interface CreateFirmTermDto {
-  firmId: number;
   description: string;
   isActive?: boolean;
 }
 
 export interface UpdateFirmTermDto {
-  firmId?: number;
   description: string;
   isActive: boolean;
 }

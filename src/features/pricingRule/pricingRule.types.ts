@@ -1,13 +1,11 @@
 // src/features/pricingRule/pricingRule.types.ts
 
 export interface CreatePricingRulePayload {
-    firmId: number;
     ruleDetails: string; // Assuming it's a JSON string or object
     isActive: boolean;
 }
 
 export interface UpdatePricingRulePayload {
-    firmId?: number;
     ruleDetails?: string;
     isActive?: boolean;
 }
@@ -15,6 +13,7 @@ export interface UpdatePricingRulePayload {
 export interface PricingRule {
     pricingRuleId: number;
     firmId: number;
+    firmName:string;
     ruleDetails: string;
     isActive: boolean;
     isDeleted: boolean;
@@ -25,6 +24,8 @@ export interface PricingRule {
 export interface PricingRuleResponseDto {
     pricingRuleId: number;
     firmId: number;
+    firmName:string;
+
     roleDetails: string;
     isActive: boolean;
     isDeleted: boolean;
