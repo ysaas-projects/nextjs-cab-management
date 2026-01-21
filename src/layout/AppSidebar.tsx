@@ -20,6 +20,19 @@ const navItems: NavItem[] = [
     { icon: <Icon name="BoxCubeIcon" />, name: "Users", path: "/users"},
 
   { icon: <Icon name="BoxCubeIcon" />, name: "Dashboard", path: "/" },
+  { icon: <Icon name="BoxCubeIcon" />, name: "Cabs", path: "/cabs"},
+  { icon: <Icon name="BoxCubeIcon" />, name: "Pricing Rules", path: "/pricing-rules"},
+    { icon: <Icon name="BoxCubeIcon" />, name: "Firm", path: "/firms" },
+    { icon: <Icon name="BoxCubeIcon" />, name: "FirmTerms", path: "/firmTerms" },
+  { 
+  icon: <Icon name="BoxCubeIcon" />, 
+  name: "DriverDetails", 
+  path: "/driverdetails" 
+  },
+
+
+
+  { icon: <Icon name="BoxCubeIcon" />, name: "Mills", path: "/mills", roles: ["Super-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "Cabs", path: "/cabs" },
   { icon: <Icon name="BoxCubeIcon" />, name: "Firms", path: "/firms" },
   { icon: <Icon name="BoxCubeIcon" />, name: "Firm Terms", path: "/firm-terms" },
@@ -36,7 +49,7 @@ const navItems: NavItem[] = [
 
   { icon: <Icon name="BoxCubeIcon" />, name: "KYC Documents", path: "/kyc-documents/uploads", roles: ["Mill-Admin", "Company-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "My Order", path: "/order/invoice", roles: ["Mill-Admin", "Company-Admin"] },
-  
+ 
 
 ];
 

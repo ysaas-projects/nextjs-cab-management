@@ -10,7 +10,7 @@ export const orderSchema = z.object({
     status: z.string().min(1, "Order status is required"),
 
     driverName: z.string().optional(),
-    mobileNumber: z.string().optional(),
+    MobileNumber: z.string().optional(),
     vehicleNumber: z.string().optional(),
     vehicleType: z.string().optional(),
 });
