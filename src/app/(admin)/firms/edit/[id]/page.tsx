@@ -1,4 +1,4 @@
-import EditFirmPage from "./EditFirmPAge";
+import EditFirmPage from "./FirmEditPage";
 
 export default function Page() {
   return <EditFirmPage />;
