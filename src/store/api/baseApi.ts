@@ -4,7 +4,7 @@ import { logoutAction } from "@/features/auth/authSlice";
 
 const baseQuery = fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    credentials: "include", // ✅ send HttpOnly cookies automatically
+    credentials: "include",
 });
 
 export const baseQueryWithReauth: BaseQueryFn<

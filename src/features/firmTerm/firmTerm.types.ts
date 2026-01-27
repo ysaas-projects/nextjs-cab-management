@@ -3,7 +3,7 @@
 export interface FirmTerm {
   firmTermId: number;
   firmId: number;
-  FirmName:string;
+  firmName:string;
   description: string;
   isActive: boolean;
   isDeleted: boolean;

@@ -3,7 +3,7 @@
 // pricing-rules/table.tsx
 import { useState } from "react";
 import Link from "next/link";
-import Swal from "sweetalert2";
+import { enqueueSnackbar, closeSnackbar } from "notistack";
 
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
@@ -20,48 +20,57 @@ type Props = {
 };
 
 const PricingRuleTable = ({ data }: Props) => {
-  const [deletePricingRule, { isLoading }] =
-    useDeletePricingRuleMutation();
-
+  const [deletePricingRule] = useDeletePricingRuleMutation();
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const handleDelete = async (id: number) => {
-    const result = await Swal.fire({
-      title: "Delete Pricing Rule?",
-      text: "This action cannot be undone!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it",
-      cancelButtonText: "Cancel",
-    });
+  /* ============ DELETE HANDLER (SNACKBAR ONLY) ============ */
+  const handleDelete = (id: number) => {
+    enqueueSnackbar(
+      "Are you sure you want to delete this pricing rule?",
+      {
+        variant: "warning",
+        persist: true,
+        action: (snackbarId) => (
+          <div className="flex gap-2">
+            <Button
+              size="xs"
+              variant="danger"
+              isLoading={deletingId === id}
+              onClick={async () => {
+                try {
+                  setDeletingId(id);
+                  await deletePricingRule(id).unwrap();
 
-    if (!result.isConfirmed) return;
+                  enqueueSnackbar(
+                    "Pricing rule deleted successfully",
+                    { variant: "success" }
+                  );
+                } catch (err: any) {
+                  enqueueSnackbar(
+                    err?.data?.message ||
+                      "Failed to delete pricing rule",
+                    { variant: "error" }
+                  );
+                } finally {
+                  setDeletingId(null);
+                  closeSnackbar(snackbarId);
+                }
+              }}
+            >
+              Delete
+            </Button>
 
-    try {
-      setDeletingId(id);
-
-      await deletePricingRule(id).unwrap();
-
-      Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: "Pricing rule deleted successfully",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Delete Failed",
-        text:
-          err?.data?.message ||
-          "Failed to delete pricing rule",
-      });
-    } finally {
-      setDeletingId(null);
-    }
+            <Button
+              size="xs"
+              variant="default"
+              onClick={() => closeSnackbar(snackbarId)}
+            >
+              Cancel
+            </Button>
+          </div>
+        ),
+      }
+    );
   };
 
   return (
@@ -81,14 +90,8 @@ const PricingRuleTable = ({ data }: Props) => {
           {data.map((item, index) => (
             <tr
               key={item.pricingRuleId}
-              onClick={() =>
-                (window.location.href =
-                  `/pricing-rules/${item.pricingRuleId}`)
-              }
-              className={`border-t cursor-pointer transition ${
-                index % 2 === 0
-                  ? "bg-white"
-                  : "bg-gray-50/50"
+              className={`border-t transition ${
+                index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
               } hover:bg-gray-100`}
             >
               <td className="px-6 py-4 font-medium text-gray-800">
@@ -99,8 +102,11 @@ const PricingRuleTable = ({ data }: Props) => {
                 {item.firmName}
               </td>
 
+              {/* ✅ VIEW LIKE CAB (Link) */}
               <td className="px-6 py-4 text-link">
-                {item.ruleDetails}
+                <Link href={`/pricing-rules/${item.pricingRuleId}`}>
+                  {item.ruleDetails}
+                </Link>
               </td>
 
               <td className="px-6 py-4">
@@ -115,11 +121,8 @@ const PricingRuleTable = ({ data }: Props) => {
                 </span>
               </td>
 
-              {/* ACTIONS */}
-              <td
-                className="px-6 py-4 text-center space-x-2"
-                onClick={(e) => e.stopPropagation()}
-              >
+              {/* ===== ACTIONS ===== */}
+              <td className="px-6 py-4 text-center space-x-2">
                 {/* ✏️ EDIT */}
                 <Link
                   href={`/pricing-rules/edit/${item.pricingRuleId}`}
@@ -144,18 +147,15 @@ const PricingRuleTable = ({ data }: Props) => {
                   size="xs"
                   variant="danger"
                   outline
+                  onClick={() =>
+                    handleDelete(item.pricingRuleId)
+                  }
+                  disabled={deletingId === item.pricingRuleId}
                   startIcon={
                     <Icon
                       name="TrashBinIcon"
                       className="w-5 h-5"
                     />
-                  }
-                  isLoading={
-                    isLoading &&
-                    deletingId === item.pricingRuleId
-                  }
-                  onClick={() =>
-                    handleDelete(item.pricingRuleId)
                   }
                 >
                   Delete
@@ -163,6 +163,17 @@ const PricingRuleTable = ({ data }: Props) => {
               </td>
             </tr>
           ))}
+
+          {data.length === 0 && (
+            <tr>
+              <td
+                colSpan={5}
+                className="px-6 py-4 text-center text-gray-500"
+              >
+                No pricing rules found.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

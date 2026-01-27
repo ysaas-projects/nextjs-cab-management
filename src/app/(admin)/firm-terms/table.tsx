@@ -76,12 +76,9 @@ const FirmTermTable = ({ data }: Props) => {
 
                 <tbody>
                     {data.map((item) => (
-                        <tr
-                            key={item.id}
-                            className="border-t hover:bg-gray-100 transition">
+                        <tr key={item.id} className="border-t hover:bg-gray-100 transition">
                             <td className="px-6 py-4 font-medium text-gray-800">{item.srNo}</td>
-                            <td className="px-6 py-4">{item.firmName} {/* ✅ SHOW NAME */}
-                            </td>
+                            <td className="px-6 py-4">{item.firmName} {/* ✅ SHOW NAME */}</td>
                             <td className="px-6 py-4 text-link">
                                 <Link href={`/firm-terms/${item.id}`}>
                                     {item.description}

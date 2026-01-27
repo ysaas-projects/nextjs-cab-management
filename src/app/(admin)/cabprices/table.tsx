@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Swal from "sweetalert2";
-import { enqueueSnackbar } from "notistack";
+import { enqueueSnackbar, closeSnackbar } from "notistack";
 
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
@@ -24,49 +23,53 @@ export interface CabPricesTableProps {
 }
 
 const CabPriceTable = ({ data }: CabPricesTableProps) => {
-  const [deleteCabPrice, { isLoading }] = useDeleteCabPriceMutation();
+  const [deleteCabPrice] = useDeleteCabPriceMutation();
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  /* ============ DELETE HANDLER (SweetAlert) ============ */
-  const handleDelete = async (id: number) => {
-    const result = await Swal.fire({
-      title: "Delete Cab Price?",
-      text: "This cab price will be permanently deleted.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, delete it",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
+  /* ============ DELETE HANDLER (SNACKBAR ONLY) ============ */
+  const handleDelete = (id: number) => {
+    enqueueSnackbar("Are you sure you want to delete this cab price?", {
+      variant: "warning",
+      persist: true,
+      action: (snackbarId) => (
+        <div className="flex gap-2">
+          <Button
+            size="xs"
+            variant="danger"
+            isLoading={deletingId === id}
+            onClick={async () => {
+              try {
+                setDeletingId(id);
+                await deleteCabPrice(id).unwrap();
+
+                enqueueSnackbar("Cab price deleted successfully", {
+                  variant: "success",
+                });
+              } catch (err: any) {
+                enqueueSnackbar(
+                  err?.data?.message ||
+                    "Failed to delete cab price",
+                  { variant: "error" }
+                );
+              } finally {
+                setDeletingId(null);
+                closeSnackbar(snackbarId);
+              }
+            }}
+          >
+            Delete
+          </Button>
+
+          <Button
+            size="xs"
+            variant="default"
+            onClick={() => closeSnackbar(snackbarId)}
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
-
-    if (!result.isConfirmed) return;
-
-    try {
-      setDeletingId(id);
-      await deleteCabPrice(id).unwrap();
-
-      await Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: "Cab price deleted successfully.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-     
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Delete Failed",
-        text: err?.data?.message || "Failed to delete cab price",
-      });
-
-     
-    } finally {
-      setDeletingId(null);
-    }
   };
 
   /* ============ EMPTY STATE ============ */
@@ -99,10 +102,13 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
             <tr
               key={item.cabPriceId}
               onClick={() =>
-                (window.location.href = `/cabprices/${item.cabPriceId}`)
+                (window.location.href =
+                  `/cabprices/${item.cabPriceId}`)
               }
               className={`border-t cursor-pointer transition ${
-                index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                index % 2 === 0
+                  ? "bg-white"
+                  : "bg-gray-50/50"
               } hover:bg-gray-100`}
             >
               <td className="px-6 py-4 font-medium text-gray-800">
@@ -141,13 +147,18 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* ✏️ EDIT */}
-                <Link href={`/cabprices/edit/${item.cabPriceId}`}>
+                <Link
+                  href={`/cabprices/edit/${item.cabPriceId}`}
+                >
                   <Button
                     size="xs"
                     variant="primary"
                     outline
                     startIcon={
-                      <Icon name="PencilIcon" className="w-5 h-5" />
+                      <Icon
+                        name="PencilIcon"
+                        className="w-5 h-5"
+                      />
                     }
                   >
                     Edit
@@ -159,10 +170,15 @@ const CabPriceTable = ({ data }: CabPricesTableProps) => {
                   size="xs"
                   variant="danger"
                   outline
-                  onClick={() => handleDelete(item.cabPriceId)}
-                  disabled={isLoading && deletingId === item.cabPriceId}
+                  onClick={() =>
+                    handleDelete(item.cabPriceId)
+                  }
+                  disabled={deletingId === item.cabPriceId}
                   startIcon={
-                    <Icon name="TrashBinIcon" className="w-5 h-5" />
+                    <Icon
+                      name="TrashBinIcon"
+                      className="w-5 h-5"
+                    />
                   }
                 >
                   Delete

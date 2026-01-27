@@ -16,10 +16,12 @@ export const api = createApi({
         "KYC",
         "Cab",
         "PricingRule",
-        "Firms",
+        "PricingRule",
+        "FirmTerm",
+        "DriverDetail",
         "Users",
         "CabPrices",
-        "FirmTerm"
+        "Firms",
 
     ],
     endpoints: () => ({}),

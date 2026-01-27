@@ -8,7 +8,7 @@ export interface CreateOrderPayload {
     status: string;
 
     driverName?: string;
-    mobileNumber?: string;
+    MobileNumber?: string;
     vehicleNumber?: string;
     vehicleType?: string;
 }
@@ -94,7 +94,7 @@ export interface PaymentDetailsResponse {
 
     // DELIVERY
     driverName: string;
-    mobileNumber: string;
+    MobileNumber: string;
     vehicleNumber: string;
     vehicleType: string | null;
 

@@ -5,7 +5,7 @@ export const API_ROUTES = {
     LOGIN: "/auth/login",
     LOGOUT: "/auth/logout",
   },
-FIRMS:"/Firms",
+  FIRMS:"/Firms",
   FIRM_DETAILS: "/FirmDetails",
   Users:"/Users",
   CabPrices:"/CabPrices",
@@ -28,5 +28,8 @@ FIRMS:"/Firms",
     CABS:"/Cabs",
     PRICING_RULES: "/PricingRules",
     // PRODUCT_DETAILS: (id: number) => `/products/${id}/details`,
+   FIRM_TERMS: "/FirmTerms", // ✅ KEEP ONLY THIS
+   DRIVER_DETAILS:"/driverdetails",
+    
    
 };
