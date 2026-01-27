@@ -76,8 +76,8 @@ const DriverDetailsTable = ({ data }: Props) => {
             <th className="px-6 py-3">Sr.No</th>
             <th className="px-6 py-3">Driver Name</th>
             <th className="px-6 py-3">Mobile Number</th>
-            <th className="px-6 py-3">Firm</th>        {/* ✅ NEW */}
-            <th className="px-6 py-3">User</th>        {/* ✅ NEW */}
+            <th className="px-6 py-3">Firm</th>        
+            <th className="px-6 py-3">User</th>        
             <th className="px-6 py-3">Status</th>
             <th className="px-6 py-3 text-center">Action</th>
           </tr>
