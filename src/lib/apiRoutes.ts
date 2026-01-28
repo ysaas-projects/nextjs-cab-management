@@ -31,6 +31,7 @@ export const API_ROUTES = {
     // PRODUCT_DETAILS: (id: number) => `/products/${id}/details`,
    FIRM_TERMS: "/FirmTerms", // ✅ KEEP ONLY THIS
    DRIVER_DETAILS:"/driverdetails",
+   CABNUMBER_DIRECTORY:"/cabnumber-directory",
     
    
 };
