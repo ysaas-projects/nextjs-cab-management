@@ -20,7 +20,7 @@ export const userApi = api.injectEndpoints({
     // ===============================
     getUsers: builder.query<User[], void>({
       query: () => "/users",
-      transformResponse: (res: ApiResponse<User[]>) => res.data,
+      // transformResponse: (res: ApiResponse<User[]>) => res.data,
       providesTags: ["Users"],
     }),
 

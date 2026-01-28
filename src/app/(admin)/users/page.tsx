@@ -7,7 +7,8 @@ export default function UsersPage() {
   const { data: users, isLoading, error } = useGetUsersQuery();
 
   if (isLoading) return <div className="p-6">Loading users...</div>;
-
+console.log(users); // 👈 should now show array
+ 
   if (error) {
     return (
       <div className="p-6 text-red-600">
