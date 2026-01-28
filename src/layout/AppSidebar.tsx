@@ -101,7 +101,7 @@ const AppSidebar: React.FC = () => {
     >
       <div className="py-8 px-5">
         <Link href="/">
-          <Image src="/images/logo/logo.svg" alt="Logo" width={150} height={40} />
+          <Image src="/images/logo.png" alt="Logo" width={200} height={40} />
         </Link>
       </div>
 

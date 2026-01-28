@@ -25,12 +25,12 @@ export default function AuthLayout({
                   <Image
                     width={231}
                     height={48}
-                    src="/images/logo/auth-logo.svg"
+                    src="/images/logo.png"
                     alt="Logo"
                   />
                 </Link>
                 <p className="text-center text-gray-400 dark:text-white/60">
-                  Trusted Source for Bulk Sugar & Jaggery Supply
+                  Managing rides with care, clarity, and confidence.
                 </p>
               </div>
             </div>

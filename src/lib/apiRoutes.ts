@@ -7,7 +7,7 @@ export const API_ROUTES = {
   },
   FIRMS:"/Firms",
   FIRM_DETAILS: "/FirmDetails",
-  Users:"/Users",
+  USERS:"/Users",
   CabPrices:"/CabPrices",
   
   // Add Authebntication routes here in the future

@@ -22,6 +22,7 @@ export const api = createApi({
         "Users",
         "CabPrices",
         "Firms",
+        "Users"
 
     ],
     endpoints: () => ({}),

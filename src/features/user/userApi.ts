@@ -1,30 +1,32 @@
 import { api } from "@/store/api";
-import { ApiResponse } from "./user.types";
-
-export interface User {
-  userId: number;
-  firmId?: number;
-  firmType?: string;
-  userName: string;
-  email?: string;
-  mobileNumber?: string;
-  isActive: boolean;
-  createdAt: string;
-}
+import { API_ROUTES } from "@/lib/apiRoutes";
+import { ApiResponse, User } from "./user.types";
 
 export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
 
     // ===============================
-    // GET USER LIST
+    // GET USERS
     // ===============================
     getUsers: builder.query<User[], void>({
-      query: () => "/users",
+      query: () => API_ROUTES.USERS,
       transformResponse: (res: ApiResponse<User[]>) => res.data,
       providesTags: ["Users"],
+    }),
+
+    // ===============================
+    // GET USER BY ID (OPTIONAL BUT RECOMMENDED)
+    // ===============================
+    getUserById: builder.query<User, number>({
+      query: (id) => `${API_ROUTES.USERS}/${id}`,
+      transformResponse: (res: ApiResponse<User>) => res.data,
+      providesTags: (result, error, id) => [{ type: "Users", id }],
     }),
 
   }),
 });
 
-export const { useGetUsersQuery } = userApi;
+export const {
+  useGetUsersQuery,
+  useGetUserByIdQuery,
+} = userApi;
