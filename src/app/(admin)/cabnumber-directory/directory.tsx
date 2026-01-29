@@ -98,31 +98,34 @@ export default function CabNumberDirectory() {
                       {/* DELETE */}
                       <button
                         title="Delete cab number"
+                        className="group
+                                    bg-transparent
+                                    text-red-600
+                                    border border-red-500
+                                    rounded
+                                    px-2 py-1
+                                    font-semibold
+                                    transition-colors duration-200
+                                    hover:bg-red-600
+                                    hover:text-white
+                                    hover:border-red-600
+                                  "
                         onClick={async () => {
                           if (!confirm("Delete this cab number?")) return;
 
                           try {
-                            await deleteCabNumber(
-                              num.cabNumberDirectoryId
-                            ).unwrap();
-
-                            enqueueSnackbar(
-                              "Cab number removed",
-                              { variant: "success" }
-                            );
+                            await deleteCabNumber(num.cabNumberDirectoryId).unwrap();
+                            enqueueSnackbar("Cab number removed", { variant: "success" });
                           } catch {
-                            enqueueSnackbar(
-                              "Failed to remove cab number",
-                              { variant: "error" }
-                            );
+                            enqueueSnackbar("Failed to remove cab number", { variant: "error" });
                           }
                         }}
                       >
                         <Icon
-                          name="CloseIcon"
-                          className="w-4 h-4 text-gray-400 hover:text-red-500"
-                        />
+                          name="TrashBinIcon"
+                          className="w-4 h-4 text-red-600 transition-colors duration-200 group-hover:text-white" />
                       </button>
+
                     </div>
                   ))}
                 </div>
