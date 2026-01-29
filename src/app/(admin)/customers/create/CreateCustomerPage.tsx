@@ -11,7 +11,7 @@ export default function CreateCustomerPage() {
   const router = useRouter();
   const [createCustomer, { isLoading }] = useCreateCustomerMutation();
 
-  const [formError, setFormError] = useState<string | null>(null);
+const [formErrors, setFormErrors] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     customerName: "",
@@ -42,34 +42,42 @@ export default function CreateCustomerPage() {
   };
 
   const handleSave = async () => {
-    setFormError(null);
+  // ✅ clear previous errors
+  setFormErrors([]);
 
-    try {
-      const formData = new FormData();
-      formData.append("customerName", form.customerName);
-      formData.append("address", form.address);
-      formData.append("gstNumber", form.gstNumber);
-      formData.append("isActive", String(form.isActive));
+  try {
+    const formData = new FormData();
+    formData.append("customerName", form.customerName);
+    formData.append("address", form.address);
+    formData.append("gstNumber", form.gstNumber);
+    formData.append("isActive", String(form.isActive));
 
-      // ✅ IMPORTANT: append file
-      if (form.logoImage) {
-        formData.append("logoImage", form.logoImage);
-      }
-
-      const response = await createCustomer(formData).unwrap();
-
-      enqueueSnackbar("Customer created successfully", {
-        variant: "success",
-      });
-
-      router.push(`/customers/${response.customerId}`);
-    } catch (err: any) {
-      setFormError(
-        err?.data?.message ||
-          "Something went wrong while saving the customer."
-      );
+    if (form.logoImage) {
+      formData.append("logoImage", form.logoImage);
     }
-  };
+
+    const response = await createCustomer(formData).unwrap();
+
+    enqueueSnackbar("Customer created successfully", {
+      variant: "success",
+    });
+
+    router.push(`/customers/${response.customerId}`);
+  } catch (err: any) {
+  if (err?.data?.errors && typeof err.data.errors === "object") {
+    // ✅ ASP.NET validation errors
+    const validationErrors = Object.values(err.data.errors).flat();
+    setFormErrors(validationErrors as string[]);
+  } else if (err?.data?.message) {
+    setFormErrors([err.data.message]);
+  } else {
+    setFormErrors([
+      "Something went wrong while saving the customer.",
+    ]);
+  }
+}
+};
+
 
   /* ================= UI ================= */
 
@@ -86,12 +94,15 @@ export default function CreateCustomerPage() {
 
       <div className="rounded-xl border bg-white shadow-sm">
         <div className="space-y-8 p-6">
-          {formError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-              {formError}
-            </div>
-          )}
-
+          {formErrors.length > 0 && (
+  <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+    <ul className="list-disc list-inside space-y-1">
+      {formErrors.map((err, index) => (
+        <li key={index}>{err}</li>
+      ))}
+    </ul>
+  </div>
+)}
           {/* CUSTOMER INFO */}
           <section>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-700">
