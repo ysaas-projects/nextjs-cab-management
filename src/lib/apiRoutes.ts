@@ -32,6 +32,7 @@ export const API_ROUTES = {
    FIRM_TERMS: "/FirmTerms", // ✅ KEEP ONLY THIS
    DRIVER_DETAILS:"/driverdetails",
    CABNUMBER_DIRECTORY:"/cabnumber-directory",
+   DUTYSLIP:"/dutyslip",
     
    
 };

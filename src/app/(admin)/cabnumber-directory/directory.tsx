@@ -17,6 +17,7 @@ export default function CabNumberDirectory() {
   const { data, isLoading } = useGetCabWiseCabNumbersQuery();
   const [createCabNumber] = useCreateCabNumberDirectoryMutation();
   const [deleteCabNumber] = useDeleteCabNumberDirectoryMutation();
+  const [search, setSearch] = useState("");
 
   // 🔹 Local UI states
   const [activeCabId, setActiveCabId] = useState<number | null>(null);
@@ -27,7 +28,23 @@ export default function CabNumberDirectory() {
     return <p className="p-4 text-gray-500">Loading...</p>;
   }
 
-  const cabList = data?.data ?? [];
+  const cabList = (data?.data ?? []).filter((cab) => {
+  if (!search.trim()) return true;
+
+  const term = search.toLowerCase();
+
+  // 🔹 match cab name/type
+  const cabMatch = cab.cabType
+    ?.toLowerCase()
+    .includes(term);
+
+  // 🔹 match cab numbers
+  const numberMatch = cab.cabNumbers?.some((num) =>
+    num.cabNumber?.toLowerCase().includes(term)
+  );
+
+  return cabMatch || numberMatch;
+});
 
   // 🔹 SAVE HANDLER
   const handleSave = async (cabId: number) => {
@@ -63,6 +80,17 @@ export default function CabNumberDirectory() {
 
   return (
     <div className="rounded-xl border bg-white p-6">
+     {/* SEARCH */}
+<div className="mb-4">
+  <input
+    type="text"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    placeholder="Search cab or cab number..."
+    className="border rounded px-3 py-2 w-80"
+  />
+</div>
+
       {/* HEADER */}
       <div className="grid grid-cols-[200px_1fr] gap-10 border-b pb-3 mb-4 font-semibold">
         <div>Cabs</div>
