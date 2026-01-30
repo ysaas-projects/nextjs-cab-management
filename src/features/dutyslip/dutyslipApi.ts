@@ -6,7 +6,12 @@ import {
   AssignDriverRequest,
   CreateDutySlipRequest,
   DutySlip,
+  UpdateStartJourneyRequest,
+  UpdateEndJourneyRequest,
+  UpdateInstructionRequest,
+  UpdateBillingRequest,
 } from "./dutyslip.types";
+
 
 export const dutySlipApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -55,12 +60,65 @@ export const dutySlipApi = api.injectEndpoints({
   invalidatesTags: ["DutySlip"],
 }),
 
+    // ===============================
+    // START JOURNEY
+    // ===============================
+    startJourney: builder.mutation<void, UpdateStartJourneyRequest>({
+      query: ({ dutySlipId, ...body }) => ({
+        url: `/dutyslips/${dutySlipId}/start-journey`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["DutySlip"],
+    }),
+
+    // ===============================
+    // END JOURNEY
+    // ===============================
+    endJourney: builder.mutation<void, UpdateEndJourneyRequest>({
+      query: ({ dutySlipId, ...body }) => ({
+        url: `/dutyslips/${dutySlipId}/end-journey`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["DutySlip"],
+    }),
+
+    // ===============================
+    // INSTRUCTION
+    // ===============================
+    updateInstruction: builder.mutation<void, UpdateInstructionRequest>({
+      query: ({ dutySlipId, ...body }) => ({
+        url: `/dutyslips/${dutySlipId}/instruction`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["DutySlip"],
+    }),
+
+    // ===============================
+    // BILLING
+    // ===============================
+    updateBilling: builder.mutation<void, UpdateBillingRequest>({
+      query: ({ dutySlipId, ...body }) => ({
+        url: `/dutyslips/${dutySlipId}/billing`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["DutySlip"],
+    }),
+
+
   }),
 });
 
 export const {
   useCreateDutySlipMutation,
   useGetDutySlipsQuery,
-    useAssignDriverMutation,   // ✅ ADD THIS
+  useAssignDriverMutation,
 
+  useStartJourneyMutation,
+  useEndJourneyMutation,
+  useUpdateInstructionMutation,
+  useUpdateBillingMutation,
 } = dutySlipApi;

@@ -36,11 +36,64 @@ export interface DutySlip {
   sentCab?: number | null;
   sentCabType?: string | null;
 
+
+  startKms?: number | null;
+  startDateTime?: string | null;
+
+  closeKms?: number | null;
+  closeDateTime?: string | null;
+
   destination?: string | null;
+  paymentMode?: string | null;
   status?: string | null;
 
   createdAt?: string;
+  updatedAt?: string;
 }
+
+
+// ===============================
+// START JOURNEY
+// ===============================
+export interface UpdateStartJourneyRequest {
+  dutySlipId: number;
+
+  reportingGeoLocation?: string;
+  startKms?: number;
+  startKmsImagePath?: string;
+  startDateTime?: string;
+}
+
+// ===============================
+// END JOURNEY
+// ===============================
+export interface UpdateEndJourneyRequest {
+  dutySlipId: number;
+
+  closeKms?: number;
+  closeKmsImagePath?: string;
+  closeDateTime?: string;
+  totalKms?: number;
+  totalTimeInMin?: number;
+}
+
+// ===============================
+// INSTRUCTION
+// ===============================
+export interface UpdateInstructionRequest {
+  dutySlipId: number;
+  nextDayInstruction: string;
+}
+
+// ===============================
+// BILLING
+// ===============================
+export interface UpdateBillingRequest {
+  dutySlipId: number;
+  paymentMode: string;
+}
+
+
 
 // ===============================
 // COMMON API RESPONSE
