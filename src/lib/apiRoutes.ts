@@ -10,6 +10,7 @@ export const API_ROUTES = {
   USERS:"/Users",
   CabPrices:"/CabPrices",
  CUSTOMERS:"/Customers",
+  CUSTOMER_USERS: "/CustomerUser",
   
   // Add Authebntication routes here in the future
   MILLS: "/mills",
