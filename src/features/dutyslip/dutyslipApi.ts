@@ -10,6 +10,7 @@ import {
   UpdateEndJourneyRequest,
   UpdateInstructionRequest,
   UpdateBillingRequest,
+  DutySlipWithExpenses,
 } from "./dutyslip.types";
 
 
@@ -59,6 +60,21 @@ export const dutySlipApi = api.injectEndpoints({
   }),
   invalidatesTags: ["DutySlip"],
 }),
+
+    getDutySlipDetails: builder.query<
+      DutySlipWithExpenses,
+      number
+    >({
+      query: (id) => `/dutyslips/${id}/details`,
+      transformResponse: (
+        res: ApiResponse<DutySlipWithExpenses>
+      ) => res.data,
+
+      providesTags: (_r, _e, id) => [
+        { type: "DutySlip", id },
+      ],
+    }),
+
 
     // ===============================
     // START JOURNEY
@@ -116,6 +132,7 @@ export const {
   useCreateDutySlipMutation,
   useGetDutySlipsQuery,
   useAssignDriverMutation,
+  useGetDutySlipDetailsQuery,
 
   useStartJourneyMutation,
   useEndJourneyMutation,

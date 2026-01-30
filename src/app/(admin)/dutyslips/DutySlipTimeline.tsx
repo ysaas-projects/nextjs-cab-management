@@ -10,56 +10,56 @@ const steps = [
     { key: "Bill-Pending", label: "Billing" },
 ];
 
-const getStepIndex = (key: string) =>
-    steps.findIndex((s) => s.key === key);
+const isCompleted = (
+    current: string | null | undefined,
+    step: string
+) => {
+    const order = steps.map((s) => s.key);
+    return (
+        !!current &&
+        order.indexOf(current) >= order.indexOf(step)
+    );
+};
 
 const DutySlipTimeline = ({ status }: Props) => {
-    const currentIndex = status
-        ? getStepIndex(status)
-        : -1;
-
     return (
-        <div className="flex flex-col gap-2 text-xs">
+        <div className="w-full flex items-center">
             {steps.map((step, idx) => {
-                const isDone = idx <= currentIndex;
-                const isCurrent = idx === currentIndex;
+                const done = isCompleted(status, step.key);
 
                 return (
                     <div
                         key={step.key}
-                        className="flex items-start gap-2"
+                        className="flex items-center flex-1 min-w-0"
                     >
-                        {/* LEFT INDICATOR */}
-                        <div className="flex flex-col items-center">
+                        {/* STEP */}
+                        <div className="flex items-center gap-2 shrink-0">
                             <div
-                                className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold ${isDone
-                                        ? "bg-green-500 text-white"
-                                        : "bg-gray-300 text-gray-500"
+                                className={`h-3 w-3 rounded-full ${done
+                                        ? "bg-green-500"
+                                        : "bg-gray-300"
+                                    }`}
+                            />
+
+                            <span
+                                className={`text-xs whitespace-nowrap ${done
+                                        ? "text-green-700 font-medium"
+                                        : "text-gray-500"
                                     }`}
                             >
-                                {isDone ? "✓" : ""}
-                            </div>
-
-                            {/* CONNECTOR LINE */}
-                            {idx < steps.length - 1 && (
-                                <div
-                                    className={`h-4 w-[1px] ${isDone
-                                            ? "bg-green-400"
-                                            : "bg-gray-300"
-                                        }`}
-                                />
-                            )}
+                                {step.label}
+                            </span>
                         </div>
 
-                        {/* LABEL */}
-                        <span
-                            className={`leading-tight ${isDone
-                                    ? "text-green-700 font-medium"
-                                    : "text-gray-500"
-                                } ${isCurrent ? "underline" : ""}`}
-                        >
-                            {step.label}
-                        </span>
+                        {/* CONNECTOR */}
+                        {idx < steps.length - 1 && (
+                            <div
+                                className={`flex-1 h-[1px] mx-2 ${done
+                                        ? "bg-green-300"
+                                        : "bg-gray-300"
+                                    }`}
+                            />
+                        )}
                     </div>
                 );
             })}

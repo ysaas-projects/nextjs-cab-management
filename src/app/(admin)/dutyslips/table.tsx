@@ -2,6 +2,7 @@
 
 import Button from "@/components/atoms/Button";
 import DutySlipTimeline from "./DutySlipTimeline";
+import Link from "next/link";
 
 
 type DutySlipRow = {
@@ -60,6 +61,7 @@ const DutySlipTable = ({
   onBilling,
   isActionDisabled
 }: Props) => {
+
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
       <table className="min-w-full text-sm text-left text-gray-600">
@@ -123,6 +125,14 @@ const DutySlipTable = ({
 
                 {/* ================= ACTION COLUMN ================= */}
                 <td className="px-6 py-4 text-center">
+
+                  <Link
+                    href={`/dutyslips/${item.id}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    View Details
+                  </Link>
+
                   <div className="flex justify-center gap-2 flex-wrap">
                     {actions.assign && (
                       <Button

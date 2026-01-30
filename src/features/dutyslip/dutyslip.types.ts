@@ -14,28 +14,18 @@ export interface CreateDutySlipRequest {
 // ===============================
 // DUTY SLIP LIST ITEM (GET)
 // ===============================
-export interface DutySlip {
+
+
+export type DutySlip = {
   dutySlipId: number;
-
-  bookedDate: string;
-  bookedBy: number;
-  bookedByName?: string | null;
-
-  firmId: number;
-  firmName?: string | null;
-
-  customerId: number;
   customerName?: string | null;
-
-  driverDetailId?: number | null;
   driverName?: string | null;
 
-  requestedCab?: number | null;
   requestedCabType?: string | null;
-
-  sentCab?: number | null;
   sentCabType?: string | null;
 
+  destination?: string | null;
+  status?: string | null;
 
   startKms?: number | null;
   startDateTime?: string | null;
@@ -43,13 +33,9 @@ export interface DutySlip {
   closeKms?: number | null;
   closeDateTime?: string | null;
 
-  destination?: string | null;
-  paymentMode?: string | null;
-  status?: string | null;
-
-  createdAt?: string;
-  updatedAt?: string;
-}
+  totalKms?: number | null;
+  totalTimeInMin?: number | null;
+};
 
 
 // ===============================
@@ -115,3 +101,25 @@ export interface AssignDriverRequest {
 reportingAddress: string;
 reportingDateTime?: string;
 }
+
+
+// ===============================
+// DUTY EXPENSE
+// ===============================
+export type DutyExpense = {
+  dutyExpenseId: number;
+  dutyId: number;
+  expenseType: string;
+  description?: string | null;
+  expenseAmount: string;
+  createdAt: string;
+};
+
+// ===============================
+// DUTY SLIP + EXPENSES (COMBINED)
+// ===============================
+export type DutySlipWithExpenses = {
+  dutySlip: DutySlip;
+  expenses: DutyExpense[];
+  totalExpenseAmount: number;
+};
