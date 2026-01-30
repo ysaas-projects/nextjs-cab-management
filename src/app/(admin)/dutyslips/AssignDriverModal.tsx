@@ -16,41 +16,59 @@ type Props = {
 };
 
 const AssignDriverModal = ({ open, onClose, dutySlipId }: Props) => {
+  // ===============================
+  // API CALLS
+  // ===============================
   const { data: drivers = [] } = useGetDriverDetailsQuery();
   const { data: cabs = [] } = useGetCabsQuery();
-const { data: cabWise } = useGetCabWiseCabNumbersQuery();
+  const { data: cabWise } = useGetCabWiseCabNumbersQuery();
 
   const [assignDriver, { isLoading }] = useAssignDriverMutation();
 
+  // ===============================
+  // STATE
+  // ===============================
   const [driverId, setDriverId] = useState<number | null>(null);
   const [sentCab, setSentCab] = useState<number | null>(null);
   const [cabNumber, setCabNumber] = useState<string>("");
- const [reportingAddress, setReportingAddress] = useState("");
-const [reportingDateTime, setReportingDateTime] = useState("");
+
+  const [reportingAddress, setReportingAddress] = useState("");
+  const [reportingDateTime, setReportingDateTime] = useState("");
+
   if (!open) return null;
 
-  // 🔥 Selected cab अनुसार cab numbers काढ
+  // ===============================
+  // CAB NUMBER LIST (cab-wise)
+  // ===============================
   const cabNumbers =
     cabWise?.data?.find((c: any) => c.cabId === sentCab)
       ?.cabNumbers ?? [];
 
+  // ===============================
+  // ASSIGN HANDLER
+  // ===============================
   const handleAssign = async () => {
-    if (!driverId || !sentCab || !cabNumber) {
-      enqueueSnackbar("Please select all fields", {
+    if (!driverId || !sentCab || !cabNumber || !reportingAddress) {
+      enqueueSnackbar("Please fill all required fields", {
         variant: "warning",
       });
       return;
     }
 
     try {
-     await assignDriver({
-  dutySlipId: dutySlipId!,
-  driverDetailId: driverId,
-  sentCab,
-  cabNumber,
-  reportingAddress,                    // ✅ REQUIRED
-  reportingDateTime: reportingDateTime || undefined,
-}).unwrap();
+      await assignDriver({
+        dutySlipId: dutySlipId!,
+        driverDetailId: driverId,
+        sentCab,
+        cabNumber,
+        reportingAddress,
+        reportingDateTime: reportingDateTime || undefined,
+      }).unwrap();
+
+      // ✅ SUCCESS MESSAGE
+      enqueueSnackbar("Driver assigned successfully", {
+        variant: "success",
+      });
 
       onClose();
     } catch (err: any) {
@@ -61,6 +79,9 @@ const [reportingDateTime, setReportingDateTime] = useState("");
     }
   };
 
+  // ===============================
+  // UI
+  // ===============================
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-[420px] rounded bg-white p-4 space-y-3">
@@ -119,25 +140,29 @@ const [reportingDateTime, setReportingDateTime] = useState("");
             >
               {n.cabNumber}
             </option>
-
-            
           ))}
         </select>
 
+        {/* REPORTING ADDRESS */}
         <input
-  type="text"
-  placeholder="Reporting Address"
-  className="w-full border rounded px-3 py-2"
-  value={reportingAddress}
-  onChange={(e) => setReportingAddress(e.target.value)}
-/>
+          type="text"
+          placeholder="Reporting Address"
+          className="w-full border rounded px-3 py-2"
+          value={reportingAddress}
+          onChange={(e) =>
+            setReportingAddress(e.target.value)
+          }
+        />
 
-<input
-  type="datetime-local"
-  className="w-full border rounded px-3 py-2"
-  value={reportingDateTime}
-  onChange={(e) => setReportingDateTime(e.target.value)}
-/>
+        {/* REPORTING DATE TIME */}
+        <input
+          type="datetime-local"
+          className="w-full border rounded px-3 py-2"
+          value={reportingDateTime}
+          onChange={(e) =>
+            setReportingDateTime(e.target.value)
+          }
+        />
 
         {/* ACTIONS */}
         <div className="flex justify-end gap-2 pt-2">

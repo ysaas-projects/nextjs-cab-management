@@ -26,6 +26,8 @@ const navItems: NavItem[] = [
 
   { icon: <Icon name="BoxCubeIcon" />, name: "Cab Prices", path: "/cabprices",roles: [ "Firm-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "Customers", path: "/customers",roles: [ "Firm-Admin"] },
+  { icon: <Icon name="BoxCubeIcon" />, name: "Customer Users", path: "/customer-users",roles: [ "Firm-Admin"] },
+
   { icon: <Icon name="BoxCubeIcon" />, name: "CabNumberDirectory", path: "/cabnumber-directory",roles: [ "Firm-Admin"] },
     { icon: <Icon name="BoxCubeIcon" />, name: "DutySlip", path: "/dutyslips",roles: [ "Firm-Admin"] },
 
