@@ -50,3 +50,15 @@ export interface ApiResponse<T> {
   message?: string;
   data: T;
 }
+
+export interface AssignDriverRequest {
+  dutySlipId: number;
+
+  driverDetailId: number;
+
+  sentCab: number;      // cabId
+  cabNumber: string;    // actual cab number string
+
+reportingAddress: string;
+reportingDateTime?: string;
+}
