@@ -12,9 +12,12 @@ type Props = {
     destination: string;
     status: string;
   }[];
+
+  // 🔥 NEW: parent कडून येणारा callback
+  onAssignDriver: (dutySlipId: number) => void;
 };
 
-const DutySlipTable = ({ data }: Props) => {
+const DutySlipTable = ({ data, onAssignDriver }: Props) => {
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
       <table className="min-w-full text-sm text-left text-gray-600">
@@ -67,6 +70,7 @@ const DutySlipTable = ({ data }: Props) => {
                   size="xs"
                   variant="primary"
                   disabled={item.status !== "Booked"}
+                  onClick={() => onAssignDriver(item.id)}
                 >
                   Assign Driver
                 </Button>

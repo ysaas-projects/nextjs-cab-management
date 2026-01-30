@@ -3,6 +3,7 @@
 import { api } from "@/store/api";
 import {
   ApiResponse,
+  AssignDriverRequest,
   CreateDutySlipRequest,
   DutySlip,
 } from "./dutyslip.types";
@@ -42,10 +43,24 @@ export const dutySlipApi = api.injectEndpoints({
       providesTags: ["DutySlip"],
     }),
 
+    assignDriver: builder.mutation<
+  void,
+  AssignDriverRequest
+>({
+  query: ({ dutySlipId, ...body }) => ({
+    url: `/dutyslips/${dutySlipId}/assign-driver`,
+    method: "PUT",
+    body,
+  }),
+  invalidatesTags: ["DutySlip"],
+}),
+
   }),
 });
 
 export const {
   useCreateDutySlipMutation,
   useGetDutySlipsQuery,
+    useAssignDriverMutation,   // ✅ ADD THIS
+
 } = dutySlipApi;

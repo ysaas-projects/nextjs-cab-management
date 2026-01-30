@@ -113,6 +113,7 @@ export const cabnumberdirectoryApi = api.injectEndpoints({
         { type: "CabNumberDirectory", id: arg.cabNumberDirectoryId },
       ],
     }),
+    
 
     // ===============================
     // DELETE (SOFT DELETE)

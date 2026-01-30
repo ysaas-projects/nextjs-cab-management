@@ -1,21 +1,45 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import DutySlipTable from "./table";
-import Link from "next/link";
 import Button from "@/components/atoms/Button";
+
+import DutySlipTable from "./table";
 
 import { useGetDutySlipsQuery } from "@/features/dutyslip/dutyslipApi";
 import { DutySlip } from "@/features/dutyslip";
+import AssignDriverModal from "./AssignDriverModal";
 
 export default function DutySlipsPage() {
+  // ===============================
+  // API
+  // ===============================
   const { data, isLoading, isError } = useGetDutySlipsQuery();
 
+  // ===============================
+  // STATE (Assign Driver Modal)
+  // ===============================
+  const [isAssignOpen, setIsAssignOpen] = useState(false);
+  const [selectedDutySlipId, setSelectedDutySlipId] =
+    useState<number | null>(null);
+
+  const handleAssignDriver = (id: number) => {
+    setSelectedDutySlipId(id);
+    setIsAssignOpen(true);
+  };
+
+  // ===============================
+  // LOADING / ERROR
+  // ===============================
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading duty slips.</div>;
 
-  // ✅ FIX HERE
+  // ===============================
+  // DATA TRANSFORM
+  // ===============================
   const dutySlips: DutySlip[] = data ?? [];
 
   const transformedData = dutySlips.map((slip) => ({
@@ -28,6 +52,9 @@ export default function DutySlipsPage() {
     status: slip.status ?? "—",
   }));
 
+  // ===============================
+  // RENDER
+  // ===============================
   return (
     <>
       <PageBreadcrumb pageTitle="Manage Duty Slips" />
@@ -43,8 +70,20 @@ export default function DutySlipsPage() {
           </Link>
         }
       >
-        <DutySlipTable data={transformedData} />
+        <DutySlipTable
+          data={transformedData}
+          onAssignDriver={handleAssignDriver}
+        />
       </ComponentCard>
+
+      {/* ===============================
+          ASSIGN DRIVER MODAL
+         =============================== */}
+      <AssignDriverModal
+        open={isAssignOpen}
+        dutySlipId={selectedDutySlipId}
+        onClose={() => setIsAssignOpen(false)}
+      />
     </>
   );
 }
