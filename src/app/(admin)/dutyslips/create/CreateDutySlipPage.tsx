@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -16,26 +17,36 @@ import { useGetCabsQuery } from "@/features/cab/cabApi";
 export default function CreateDutySlipPage() {
   const router = useRouter();
 
+  // ===============================
+  // API
+  // ===============================
   const [createDutySlip, { isLoading }] =
     useCreateDutySlipMutation();
 
-  // 🔹 Dropdown data
   const { data: customerData } =
-    useGetCustomersPaginatedQuery({ pageNumber: 1, pageSize: 100 });
+    useGetCustomersPaginatedQuery({
+      pageNumber: 1,
+      pageSize: 100,
+    });
 
   const { data: cabsData } = useGetCabsQuery();
 
   const customers = customerData?.items ?? [];
   const cabs = cabsData ?? [];
 
-  // ❌ no bookedBy here
+  // ===============================
+  // STATE
+  // ===============================
   const [form, setForm] = useState<CreateDutySlipRequest>({
-  bookedDate: new Date().toISOString(), // ✅ FIX
-  customerId: 0,
-  requestedCab: undefined,
-  destination: "",
-});
+    bookedDate: new Date().toISOString(), // backend uses this
+    customerId: 0,
+    requestedCab: undefined,
+    destination: "",
+  });
 
+  // ===============================
+  // HANDLERS
+  // ===============================
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement
@@ -55,17 +66,35 @@ export default function CreateDutySlipPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // ✅ BASIC VALIDATION
+    if (!form.customerId || !form.destination.trim()) {
+      enqueueSnackbar("Please fill all required fields", {
+        variant: "warning",
+      });
+      return;
+    }
+
     try {
       await createDutySlip(form).unwrap();
+
+      // ✅ SUCCESS MESSAGE
+      enqueueSnackbar("Duty slip created successfully", {
+        variant: "success",
+      });
+
       router.push("/dutyslips");
     } catch (error: any) {
-  console.error(
-    "Failed to create duty slip",
-    error?.data || error
-  );
-}
+      enqueueSnackbar(
+        error?.data?.message ||
+          "Failed to create duty slip",
+        { variant: "error" }
+      );
+    }
   };
 
+  // ===============================
+  // UI
+  // ===============================
   return (
     <>
       <PageBreadcrumb pageTitle="Create Duty Slip" />
@@ -75,16 +104,15 @@ export default function CreateDutySlipPage() {
           onSubmit={handleSubmit}
           className="grid gap-4 max-w-lg"
         >
-          {/* ================= CUSTOMER DROPDOWN ================= */}
+          {/* ================= CUSTOMER ================= */}
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Customer
+              Customer <span className="text-red-500">*</span>
             </label>
             <select
               name="customerId"
               value={form.customerId}
               onChange={handleChange}
-              required
               className="w-full border rounded px-3 py-2"
             >
               <option value={0}>Select Customer</option>
@@ -99,7 +127,7 @@ export default function CreateDutySlipPage() {
             </select>
           </div>
 
-          {/* ================= REQUESTED CAB DROPDOWN ================= */}
+          {/* ================= REQUESTED CAB ================= */}
           <div>
             <label className="block mb-1 text-sm font-medium">
               Requested Cab (Optional)
@@ -112,7 +140,10 @@ export default function CreateDutySlipPage() {
             >
               <option value="">Select Cab</option>
               {cabs.map((cab) => (
-                <option key={cab.cabId} value={cab.cabId}>
+                <option
+                  key={cab.cabId}
+                  value={cab.cabId}
+                >
                   {cab.cabType}
                 </option>
               ))}
@@ -122,15 +153,15 @@ export default function CreateDutySlipPage() {
           {/* ================= DESTINATION ================= */}
           <div>
             <label className="block mb-1 text-sm font-medium">
-              Destination
+              Destination <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               name="destination"
               value={form.destination}
               onChange={handleChange}
-              required
               className="w-full border rounded px-3 py-2"
+              placeholder="Enter destination"
             />
           </div>
 
@@ -142,7 +173,9 @@ export default function CreateDutySlipPage() {
               size="sm"
               disabled={isLoading}
             >
-              {isLoading ? "Saving..." : "Create Duty Slip"}
+              {isLoading
+                ? "Saving..."
+                : "Create Duty Slip"}
             </Button>
 
             <Button
