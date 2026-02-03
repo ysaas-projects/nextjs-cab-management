@@ -33,6 +33,8 @@ export const API_ROUTES = {
    DRIVER_DETAILS:"/driverdetails",
    CABNUMBER_DIRECTORY:"/cabnumber-directory",
    DUTYSLIP:"/dutyslip",
+   TOURPACKAGE:"/tour-packages",
+   SEASON:"/seasons",
     
    
 };

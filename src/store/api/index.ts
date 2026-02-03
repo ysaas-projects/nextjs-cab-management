@@ -26,6 +26,9 @@ export const api = createApi({
         "Customers",
         "CabNumberDirectory",
         "DutySlip",
+        "DutyExpense",
+        "TourPackage",
+        "Season",
 
     ],
     endpoints: () => ({}),

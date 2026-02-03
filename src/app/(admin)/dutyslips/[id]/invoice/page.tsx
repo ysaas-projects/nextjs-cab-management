@@ -45,8 +45,8 @@ export default function InvoicePrintPage() {
       totalKm: 360,
       startDate: "23/11/2025",
       endDate: "23/11/2025",
-      startTime: "7.00am",
-      endTime: "9.30pm",
+      startTime: "7.00 AM",
+      endTime: "9.30 PM",
       days: 1,
       hours: 14,
     },
@@ -65,7 +65,7 @@ export default function InvoicePrintPage() {
 
   return (
     <div className="page">
-      {/* PRINT BUTTON (SCREEN ONLY) */}
+      {/* SCREEN ONLY */}
       <div className="toolbar">
         <button onClick={() => window.print()}>🖨 Print Invoice</button>
       </div>
@@ -74,12 +74,14 @@ export default function InvoicePrintPage() {
         {/* HEADER */}
         <div className="header-box">
           <div className="logo">ST</div>
+
           <div className="company">
-            <b>{invoice.company.name}</b>
+            <div className="title">{invoice.company.name}</div>
             <div>{invoice.company.address}</div>
-            <div>Contact No: {invoice.company.contact}</div>
+            <div>Contact No : {invoice.company.contact}</div>
             <div>GSTIN : {invoice.company.gstin}</div>
           </div>
+
           <div className="invoice-word">Invoice</div>
         </div>
 
@@ -87,13 +89,13 @@ export default function InvoicePrintPage() {
         <table className="table">
           <tbody>
             <tr>
-              <td className="left">
+              <td>
                 <b>To</b><br />
                 {invoice.to.name}<br />
                 {invoice.to.address}<br />
                 GST No : {invoice.to.gstin}
               </td>
-              <td className="left">
+              <td>
                 Date : {invoice.info.date}<br />
                 Invoice No : {invoice.info.invoiceNo}<br />
                 Itinerary Code : {invoice.info.itinerary}<br />
@@ -104,7 +106,7 @@ export default function InvoicePrintPage() {
           </tbody>
         </table>
 
-        {/* BILL TO / USER / CAB — TABLE FORMAT (LIKE PHOTO) */}
+        {/* BILL TO / USER / CAB — SAME ALIGNMENT */}
         <table className="table">
           <thead>
             <tr>
@@ -115,15 +117,15 @@ export default function InvoicePrintPage() {
           </thead>
           <tbody>
             <tr>
-              <td className="left">
+              <td>
                 <b>{invoice.billTo.name}</b><br />
                 {invoice.billTo.address}
               </td>
-              <td className="left">
+              <td>
                 Name : {invoice.user.name}<br />
                 Mob No : {invoice.user.mobile}
               </td>
-              <td className="left">
+              <td>
                 Cab Type : {invoice.cab.type}<br />
                 Cab No : {invoice.cab.number}<br />
                 Driver Name : {invoice.cab.driver}<br />
@@ -199,7 +201,10 @@ export default function InvoicePrintPage() {
 
       {/* STYLES */}
       <style jsx>{`
-        @page { size: A4; margin: 10mm; }
+        @page {
+          size: A4;
+          margin: 10mm;
+        }
 
         .toolbar {
           text-align: right;
@@ -209,8 +214,8 @@ export default function InvoicePrintPage() {
         .sheet {
           border: 1px solid #000;
           padding: 8mm;
-          font-size: 11px;
           font-family: Arial;
+          font-size: 11px;
         }
 
         .header-box {
@@ -232,8 +237,19 @@ export default function InvoicePrintPage() {
           font-weight: bold;
         }
 
-        .company { text-align: center; }
-        .invoice-word { text-align: right; font-weight: bold; }
+        .company {
+          text-align: center;
+        }
+
+        .title {
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        .invoice-word {
+          text-align: right;
+          font-weight: bold;
+        }
 
         .table {
           width: 100%;
@@ -241,17 +257,19 @@ export default function InvoicePrintPage() {
           margin-top: 6px;
         }
 
-        .table th,
-        .table td {
+        .table th {
           border: 1px solid #000;
-          padding: 4px;
-          text-align: center;
+          padding: 4px 6px;
+          text-align: left;     /* SAME AS BODY */
+          font-weight: bold;
         }
 
-        .left {
+        .table td {
+          border: 1px solid #000;
+          padding: 4px 6px;
           text-align: left;
           vertical-align: top;
-          line-height: 1.4;
+          line-height: 1.35;
         }
 
         .words {
@@ -271,33 +289,12 @@ export default function InvoicePrintPage() {
           justify-content: space-between;
           margin-top: 18px;
         }
-@media print {
-  /* Hide App Layout Header (CABLIFE) */
-  :global(header),
-  :global(nav),
-  :global(aside),
-  :global(.app-header) {
-    display: none !important;
-  }
 
-  /* Hide print button */
-  .toolbar {
-    display: none !important;
-  }
-
-  /* Ensure invoice prints properly */
-  body {
-    margin: 0;
-  }
-
-  .page {
-    position: static;
-    width: 100%;
-  }
-}
-
-
-
+        @media print {
+          .toolbar {
+            display: none !important;
+          }
+        }
       `}</style>
     </div>
   );

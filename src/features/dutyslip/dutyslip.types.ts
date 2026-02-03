@@ -14,33 +14,72 @@ export interface CreateDutySlipRequest {
 // ===============================
 // DUTY SLIP LIST ITEM (GET)
 // ===============================
-export interface DutySlip {
+
+
+export type DutySlip = {
   dutySlipId: number;
-
-  bookedDate: string;
-  bookedBy: number;
-  bookedByName?: string | null;
-
-  firmId: number;
-  firmName?: string | null;
-
-  customerId: number;
   customerName?: string | null;
-
-  driverDetailId?: number | null;
   driverName?: string | null;
 
-  requestedCab?: number | null;
   requestedCabType?: string | null;
-
-  sentCab?: number | null;
   sentCabType?: string | null;
 
   destination?: string | null;
   status?: string | null;
 
-  createdAt?: string;
+  startKms?: number | null;
+  startDateTime?: string | null;
+
+  closeKms?: number | null;
+  closeDateTime?: string | null;
+
+  totalKms?: number | null;
+  totalTimeInMin?: number | null;
+};
+
+
+// ===============================
+// START JOURNEY
+// ===============================
+export interface UpdateStartJourneyRequest {
+  dutySlipId: number;
+
+  reportingGeoLocation?: string;
+  startKms?: number;
+  startKmsImagePath?: string;
+  startDateTime?: string;
 }
+
+// ===============================
+// END JOURNEY
+// ===============================
+export interface UpdateEndJourneyRequest {
+  dutySlipId: number;
+
+  closeKms?: number;
+  closeKmsImagePath?: string;
+  closeDateTime?: string;
+  totalKms?: number;
+  totalTimeInMin?: number;
+}
+
+// ===============================
+// INSTRUCTION
+// ===============================
+export interface UpdateInstructionRequest {
+  dutySlipId: number;
+  nextDayInstruction: string;
+}
+
+// ===============================
+// BILLING
+// ===============================
+export interface UpdateBillingRequest {
+  dutySlipId: number;
+  paymentMode: string;
+}
+
+
 
 // ===============================
 // COMMON API RESPONSE
@@ -62,3 +101,25 @@ export interface AssignDriverRequest {
 reportingAddress: string;
 reportingDateTime?: string;
 }
+
+
+// ===============================
+// DUTY EXPENSE
+// ===============================
+export type DutyExpense = {
+  dutyExpenseId: number;
+  dutyId: number;
+  expenseType: string;
+  description?: string | null;
+  expenseAmount: string;
+  createdAt: string;
+};
+
+// ===============================
+// DUTY SLIP + EXPENSES (COMBINED)
+// ===============================
+export type DutySlipWithExpenses = {
+  dutySlip: DutySlip;
+  expenses: DutyExpense[];
+  totalExpenseAmount: number;
+};
