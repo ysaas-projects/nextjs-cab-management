@@ -17,28 +17,16 @@ export const firmApi = api.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Firms", id }],
     }),
 
-    createFirm: builder.mutation<
-      FirmWithDetails,
-      {
-        firmName: string;
-        firmCode: string;
-        isActive: boolean;
-        address?: string;
-        contactNumber?: string;
-        contactPerson?: string;
-        gstNumber?: string;
-        logoImagePath?: string;
-      }
-    >({
-      query: (payload) => ({
-        url: API_ROUTES.FIRMS,
-        method: "POST",
-        body: payload,
-        headers: { "Content-Type": "application/json" },
-      }),
-      transformResponse: (res: ApiResponse<FirmWithDetails>) => res.data,
-      invalidatesTags: ["Firms"],
-    }),
+    createFirm: builder.mutation<FirmWithDetails, FormData>({
+  query: (formData) => ({
+    url: API_ROUTES.FIRMS,
+    method: "POST",
+    body: formData,
+    // ❌ headers काढ
+  }),
+  transformResponse: (res: ApiResponse<FirmWithDetails>) => res.data,
+  invalidatesTags: ["Firms"],
+}),
 
     updateFirm: builder.mutation<
       FirmWithDetails,

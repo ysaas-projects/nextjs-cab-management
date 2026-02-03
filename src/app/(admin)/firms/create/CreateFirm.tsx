@@ -12,19 +12,16 @@ export default function CreateFirmPage() {
   const [createFirm, { isLoading }] = useCreateFirmMutation();
 
   const [form, setForm] = useState({
-    // Firm
     firmName: "",
     firmCode: "",
     isActive: true,
-
-    // FirmDetails
     address: "",
     contactNumber: "",
     contactPerson: "",
     gstNumber: "",
   });
 
-  // 🔹 logo file (UI only)
+  // ✅ Logo file state
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const [formError, setFormError] = useState<string | null>(null);
@@ -40,11 +37,12 @@ export default function CreateFirmPage() {
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    setLogoFile(file);
+    if (file) {
+      setLogoFile(file);
+    }
   };
 
+  // ✅ FIXED: FormData based submit
   const handleSave = async () => {
     setFormError(null);
 
@@ -54,17 +52,30 @@ export default function CreateFirmPage() {
     }
 
     try {
-      await createFirm({
-        ...form,
-        logoImagePath: "", // ✅ backend expects string, upload later
-      }).unwrap();
+      const formData = new FormData();
 
-      enqueueSnackbar("Firm created successfully", {
-        variant: "success",
-      });
+      // -------- Firm --------
+      formData.append("FirmName", form.firmName);
+      formData.append("FirmCode", form.firmCode);
+      formData.append("IsActive", String(form.isActive));
 
+      // -------- Firm Details --------
+      if (form.address) formData.append("Address", form.address);
+      if (form.contactNumber) formData.append("ContactNumber", form.contactNumber);
+      if (form.contactPerson) formData.append("ContactPerson", form.contactPerson);
+      if (form.gstNumber) formData.append("GstNumber", form.gstNumber);
+
+      // -------- Logo --------
+      if (logoFile) {
+        formData.append("Logo", logoFile); // 👈 MUST match backend DTO
+      }
+
+      await createFirm(formData).unwrap();
+
+      enqueueSnackbar("Firm created successfully", { variant: "success" });
       router.push("/firms");
-    } catch {
+    } catch (error) {
+      console.error(error);
       setFormError("Something went wrong while creating firm");
     }
   };
@@ -130,7 +141,7 @@ export default function CreateFirmPage() {
           onChange={handleChange}
         />
 
-        {/* ✅ Logo file select */}
+        {/* ================= Logo ================= */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Firm Logo
