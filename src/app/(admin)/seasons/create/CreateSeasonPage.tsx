@@ -92,7 +92,7 @@ export default function CreateSeasonPage() {
             name="seasonName"
             value={form.seasonName}
             onChange={handleChange}
-            placeholder="Peak / Off-Season / Festival"
+            placeholder="Peak / Off-Season / Festival/Mansoon"
           />
 
           {/* START DATE */}

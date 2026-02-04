@@ -48,7 +48,7 @@ export type CreateTourPackageRequest = {
 // UPDATE
 // ===============================
 export type UpdateTourPackageRequest = {
-      tourPackageId: number; // ✅ REQUIRED
+      packageId: number; // ✅ REQUIRED
 
   packageName?: string;
   description?: string;

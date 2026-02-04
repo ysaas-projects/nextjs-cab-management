@@ -1,15 +1,15 @@
-// "use client";
+"use client";
 
-// import TourPackageProfileView from "./TourPackageProfilePage";
+import { useParams } from "next/navigation";
+import TourPackageProfileView from "./TourPackageProfileView";
 
-// type PageProps = {
-//   params: {
-//     id: string;
-//   };
-// };
+export default function TourPackageDetailsPage() {
+  const params = useParams();
+  const packageId = Number(params.id);
 
-// export default function TourPackageProfileView({ params }: PageProps) {
-//   const packageId = Number(params.id);
+  if (!packageId || Number.isNaN(packageId)) {
+    return <div>Invalid Package ID</div>;
+  }
 
-//   return <TourPackageProfileView packageId={packageId} />;
-// }
+  return <TourPackageProfileView packageId={packageId} />;
+}

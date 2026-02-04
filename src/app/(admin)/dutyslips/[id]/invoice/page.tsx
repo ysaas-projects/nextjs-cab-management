@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useGetFirmTermsQuery } from "@/features/firmTerm/firmTermApi";
 
 export default function InvoicePrintPage() {
+  // =======================
+  // 1️⃣ INVOICE STATE
+  // =======================
   const [invoice] = useState({
     company: {
       name: "SHRAVANI TOURS AND TRAVELS",
@@ -58,6 +62,11 @@ export default function InvoicePrintPage() {
     ],
   });
 
+  // =======================
+  // 2️⃣ TERMS API (COMMON FOR ALL INVOICES)
+  // =======================
+  const { data: terms = [], isLoading } = useGetFirmTermsQuery();
+
   const total = invoice.items.reduce(
     (sum, i) => sum + i.qty * i.rate,
     0
@@ -106,7 +115,7 @@ export default function InvoicePrintPage() {
           </tbody>
         </table>
 
-        {/* BILL TO / USER / CAB — SAME ALIGNMENT */}
+        {/* BILL TO / USER / CAB */}
         <table className="table">
           <thead>
             <tr>
@@ -182,119 +191,70 @@ export default function InvoicePrintPage() {
           </tbody>
         </table>
 
-        <div className="words">
-          <b>Rupees In Word :</b> Five Thousand Two Hundred Fifty Five Rupees Only.
-        </div>
+        {/* ✅ TERMS + SIGNATURES (FINAL LAYOUT) */}
+       {/* ✅ TERMS + SIGNATURES (FINAL FIXED LAYOUT) */}
+<table className="table">
+  <tbody>
+    <tr style={{ height: "120px" }}>
+      {/* TERMS (TOP-LEFT) */}
+      <td style={{ width: "50%", fontSize: "10px", verticalAlign: "top" }}>
+        {isLoading ? (
+          <div>Loading terms...</div>
+        ) : terms.length === 0 ? (
+          <div>No terms available</div>
+        ) : (
+          terms
+            .filter((t) => t.isActive)
+            .map((term) => (
+              <div key={term.firmTermId}>
+                {term.description.replace(/\.$/, "")}.
+              </div>
+            ))
+        )}
+      </td>
 
-        <div className="terms">
-          <div>Kms & Hrs will be calculated from office to office.</div>
-          <div>Insurance of passenger is not included.</div>
-          <div>Cancellation Charges Rs.1000 compulsory.</div>
-          <div>Toll and parking paid by party.</div>
-        </div>
+      {/* CUSTOMER SIGN (BOTTOM-CENTER) */}
+      <td
+        style={{
+          width: "25%",
+          textAlign: "center",
+          verticalAlign: "top",
+          paddingBottom: "8px",
+        }}
+      >
+        <b>Customer Sign</b>
+      </td>
 
-        <div className="sign">
-          <div>Customer Sign</div>
-          <div>For Shravani Tours and Travels</div>
-        </div>
+      {/* COMPANY SIGN (BOTTOM-RIGHT) */}
+      <td
+        style={{
+          width: "25%",
+          textAlign: "center",
+          verticalAlign: "top",
+          paddingBottom: "8px",
+        }}
+      >
+        <b>For Shravani Tours and Travels</b>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
       </div>
 
       {/* STYLES */}
       <style jsx>{`
-        @page {
-          size: A4;
-          margin: 10mm;
-        }
-
-        .toolbar {
-          text-align: right;
-          margin-bottom: 6px;
-        }
-
-        .sheet {
-          border: 1px solid #000;
-          padding: 8mm;
-          font-family: Arial;
-          font-size: 11px;
-        }
-
-        .header-box {
-          border: 1px solid #000;
-          display: grid;
-          grid-template-columns: 50px 1fr 80px;
-          padding: 6px;
-          align-items: center;
-        }
-
-        .logo {
-          border: 1px solid #000;
-          border-radius: 50%;
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-        }
-
-        .company {
-          text-align: center;
-        }
-
-        .title {
-          font-size: 14px;
-          font-weight: bold;
-        }
-
-        .invoice-word {
-          text-align: right;
-          font-weight: bold;
-        }
-
-        .table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 6px;
-        }
-
-        .table th {
-          border: 1px solid #000;
-          padding: 4px 6px;
-          text-align: left;     /* SAME AS BODY */
-          font-weight: bold;
-        }
-
-        .table td {
-          border: 1px solid #000;
-          padding: 4px 6px;
-          text-align: left;
-          vertical-align: top;
-          line-height: 1.35;
-        }
-
-        .words {
-          margin-top: 6px;
-          font-weight: bold;
-        }
-
-        .terms {
-          border-top: 1px solid #000;
-          margin-top: 6px;
-          padding-top: 4px;
-          font-size: 10px;
-        }
-
-        .sign {
-          display: flex;
-          justify-content: space-between;
-          margin-top: 18px;
-        }
-
-        @media print {
-          .toolbar {
-            display: none !important;
-          }
-        }
+        @page { size: A4; margin: 10mm; }
+        .toolbar { text-align: right; margin-bottom: 6px; }
+        .sheet { border: 1px solid #000; padding: 8mm; font-family: Arial; font-size: 11px; }
+        .header-box { border: 1px solid #000; display: grid; grid-template-columns: 50px 1fr 80px; padding: 6px; }
+        .logo { border: 1px solid #000; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .company { text-align: center; }
+        .title { font-size: 14px; font-weight: bold; }
+        .invoice-word { text-align: right; font-weight: bold; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        .table th, .table td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+        @media print { .toolbar { display: none !important; } }
       `}</style>
     </div>
   );

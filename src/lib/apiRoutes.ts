@@ -35,6 +35,7 @@ export const API_ROUTES = {
    DUTYSLIP:"/dutyslip",
    TOURPACKAGE:"/tour-packages",
    SEASON:"/seasons",
+   PACKAGEPRICING:"/package-pricing",
     
    
 };

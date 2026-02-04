@@ -14,19 +14,30 @@ export const seasonApi = api.injectEndpoints({
     // ===============================
     getSeasons: builder.query<ApiResponse<Season[]>, void>({
       query: () => "/seasons",
-      providesTags: ["Season"],
+      providesTags: (result) =>
+        result?.data
+          ? [
+              ...result.data.map((season) => ({
+                type: "Season" as const,
+                id: season.seasonId,
+              })),
+              { type: "Season", id: "LIST" },
+            ]
+          : [{ type: "Season", id: "LIST" }],
     }),
 
     // ===============================
-    // GET BY ID
+    // GET SEASON BY ID
     // ===============================
     getSeasonById: builder.query<ApiResponse<Season>, number>({
       query: (id) => `/seasons/${id}`,
-      providesTags: (_r, _e, id) => [{ type: "Season", id }],
+      providesTags: (_result, _error, id) => [
+        { type: "Season", id },
+      ],
     }),
 
     // ===============================
-    // CREATE
+    // CREATE SEASON
     // ===============================
     createSeason: builder.mutation<
       ApiResponse<Season>,
@@ -37,11 +48,13 @@ export const seasonApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Season"],
+      invalidatesTags: [
+        { type: "Season", id: "LIST" },
+      ],
     }),
 
     // ===============================
-    // UPDATE
+    // UPDATE SEASON
     // ===============================
     updateSeason: builder.mutation<
       ApiResponse<boolean>,
@@ -52,20 +65,23 @@ export const seasonApi = api.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (_r, _e, arg) => [
-        { type: "Season", id: arg.seasonId },
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Season", id: arg.seasonId }, // refresh detail
+        { type: "Season", id: "LIST" },       // refresh list
       ],
     }),
 
     // ===============================
-    // DELETE
+    // DELETE SEASON
     // ===============================
     deleteSeason: builder.mutation<ApiResponse<boolean>, number>({
       query: (id) => ({
         url: `/seasons/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Season"],
+      invalidatesTags: [
+        { type: "Season", id: "LIST" },
+      ],
     }),
   }),
 });
