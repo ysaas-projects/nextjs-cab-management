@@ -15,6 +15,11 @@ import { DutySlip } from "@/features/dutyslip";
 import AssignDriverModal from "./AssignDriverModal";
 import StartJourneyModal from "./StartJourneyModal";
 import EndJourneyModal from "./EndJourneyModal";
+import BillingModal from "./BillingModal"; // ✅ ADDED
+import { enqueueSnackbar } from "notistack";
+import {
+  useUpdateBillingMutation,
+} from "@/features/dutyslip/dutyslipApi";
 
 type TableRow = {
   id: number;
@@ -53,6 +58,10 @@ export default function DutySlipsPage() {
   const isAnyModalOpen =
     isAssignOpen || isStartOpen || isEndOpen;
 
+  const [isBillingOpen, setIsBillingOpen] = useState(false); // ✅ ADDED
+const [updateBilling] = useUpdateBillingMutation();
+
+
   // ===============================
   // HANDLERS
   // ===============================
@@ -73,9 +82,12 @@ export default function DutySlipsPage() {
 
   const handleBilling = (slip: TableRow) => {
     console.log("Billing for DutySlip:", slip.id);
-    // future: open billing modal or navigate
+    setSelectedSlip(slip);
+    setIsBillingOpen(true); // ✅ OPEN MODAL
   };
 
+
+  
   // ===============================
   // LOADING / ERROR
   // ===============================
@@ -146,14 +158,16 @@ export default function DutySlipsPage() {
           }
           onBilling={(id) =>
             handleBilling(
-              transformedData.find(
-                (x) => x.id === id
-              )!
+              transformedData.find((x) => x.id === id)!
             )
           }
+         
+          
 
           isActionDisabled={isAnyModalOpen}          
         />
+
+        
       </ComponentCard>
 
       {/* ===============================
@@ -181,6 +195,40 @@ export default function DutySlipsPage() {
         }
         onClose={() => setIsEndOpen(false)}
       />
+      {/* ✅ BILLING MODAL */}
+      <BillingModal
+        open={isBillingOpen}
+        details={null}
+        onClose={() => setIsBillingOpen(false)}
+       onSave={async (paymentMode) => {
+  if (!selectedSlip?.id) {
+    enqueueSnackbar("Invalid duty slip", {
+      variant: "error",
+    });
+    return;
+  }
+
+  try {
+    await updateBilling({
+      dutySlipId: selectedSlip.id,
+      paymentMode,
+    }).unwrap();
+
+    enqueueSnackbar("Billing updated successfully", {
+      variant: "success",
+    });
+
+    setIsBillingOpen(false);
+  } catch (err: any) {
+    enqueueSnackbar(
+      err?.data?.message || "Billing failed",
+      { variant: "error" }
+    );
+  }
+}}
+
+        />
+      
     </>
   );
 }
