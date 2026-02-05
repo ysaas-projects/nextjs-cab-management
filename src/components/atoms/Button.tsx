@@ -8,6 +8,7 @@ type ButtonSize = "xs" | "sm" | "md";
 type ButtonVariant =
   | "primary"
   | "secondary"
+  | "success"
   | "warning"
   | "danger"
   | "dark"
@@ -56,6 +57,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         solid: "bg-gray-600 text-white hover:bg-gray-700",
         outline: "border border-gray-500 text-gray-700 hover:bg-gray-100",
       },
+      success: {   // ✅ ADD THIS
+        solid: "bg-green-600 text-white hover:bg-green-700",
+        outline: "border border-green-600 text-green-600 hover:bg-green-50",
+      },      
       warning: {
         solid: "bg-yellow-500 text-white hover:bg-yellow-600",
         outline: "border border-yellow-500 text-yellow-600 hover:bg-yellow-50",

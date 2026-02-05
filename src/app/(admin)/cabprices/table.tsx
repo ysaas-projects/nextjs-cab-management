@@ -1,4 +1,5 @@
 "use client";
+// src/app/(admin)/cabprices/table.tsx
 
 import { useState } from "react";
 import Link from "next/link";

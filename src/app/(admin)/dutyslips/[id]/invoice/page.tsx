@@ -1,70 +1,75 @@
 "use client";
 
-import { useState } from "react";
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
+import { useMemo } from "react";
+import { useParams } from "next/navigation";
+
+import { useGetMyFirmQuery } from "@/features/firm/firmApi";
 import { useGetFirmTermsQuery } from "@/features/firmTerm/firmTermApi";
+import { useGetDutySlipInvoiceQuery } from "@/features/dutyslip/dutyslipApi";
+
+/* =======================
+   HELPERS
+======================= */
+const formatDate = (date?: string | null) => {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("en-GB");
+};
+
+const formatTime = (date?: string | null) => {
+  if (!date) return "";
+  return new Date(date).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const generateInvoiceNo = (createdAt?: string, id?: number) => {
+  if (!createdAt || !id) return "";
+  const d = new Date(createdAt);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  return `INV-${year}${month}-${id}`;
+};
+
+const formatDutySlipNo = (id?: number) => {
+  if (!id) return "";
+  return String(id).padStart(4, "0");
+};
 
 export default function InvoicePrintPage() {
-  const [invoice] = useState({
-    company: {
-      name: "SHRAVANI TOURS AND TRAVELS",
-      address:
-        "Sr. No. 2040, Siddhivinayak Colony, Road No.4, Papde Wasti, Fursungi - 412308",
-      contact: "07384739777",
-      gstin: "27AJPR6872R1ZZ",
-    },
-    to: {
-      name: "Kansai Nerolac Paints Limited",
-      address:
-        "28th Floor, A-Wing, Marathon Futurex, NM Joshi Marg, Lower Parel, Mumbai - 400013",
-      gstin: "27AAACK1376N1ZC",
-    },
-    billTo: {
-      name: "Kansai Nerolac Paints Ltd",
-      address:
-        "Sr. No.34, Pirangut Road, Near Manas Lake, Ghotawade Phata",
-    },
-    info: {
-      date: "25/11/2025",
-      invoiceNo: "3261",
-      itinerary: "460",
-      dutySlip: "460",
-      bookedBy: "Mr. Devkar Sir",
-    },
-    user: {
-      name: "Mr. Arshad Ali Sir",
-      mobile: "9871219879",
-    },
-    cab: {
-      type: "Dzire",
-      number: "MH12XM7187",
-      driver: "Ashok",
-      place: "Mahabaleshwar",
-    },
-    trip: {
-      startKm: 41558,
-      closeKm: 41918,
-      totalKm: 360,
-      startDate: "23/11/2025",
-      endDate: "23/11/2025",
-      startTime: "7.00 AM",
-      endTime: "9.30 PM",
-      days: 1,
-      hours: 14,
-    },
-    items: [
-      { name: "FIRST 80KM / 8 HOURS", qty: 1, rate: 3900 },
-      { name: "Extra Km", qty: 60, rate: 13 },
-      { name: "Extra Hrs", qty: 2, rate: 85 },
-      { name: "Toll and Parking", qty: 1, rate: 405 },
-    ],
-  });
+  /* =======================
+     PARAM
+  ======================= */
+  const { id } = useParams();
+  const dutySlipId = Number(id);
 
-  const { data: terms = [], isLoading } = useGetFirmTermsQuery();
+  /* =======================
+     LOGIN FIRM
+  ======================= */
+  const { data: firm } = useGetMyFirmQuery();
 
-  const total = invoice.items.reduce(
-    (sum, i) => sum + i.qty * i.rate,
-    0
-  );
+  /* =======================
+     FIRM TERMS
+  ======================= */
+  const { data: terms = [] } = useGetFirmTermsQuery();
+
+  /* =======================
+     INVOICE API (IMPORTANT)
+  ======================= */
+  const { data } = useGetDutySlipInvoiceQuery(dutySlipId);
+
+  const duty = data?.dutySlip;
+  const customerUsers = data?.customerUsers ?? [];
+
+  /* =======================
+     TOTAL (STATIC FOR NOW)
+  ======================= */
+  const total = useMemo(() => 5255, []);
+
+  if (!duty) return <div>Loading invoice...</div>;
 
   return (
     <div className="page">
@@ -73,40 +78,52 @@ export default function InvoicePrintPage() {
       </div>
 
       <div className="sheet">
-        {/* HEADER */}
+        {/* ================= HEADER ================= */}
         <div className="header-box">
-          <div className="logo">ST</div>
-          <div className="company">
-            <div className="title">{invoice.company.name}</div>
-            <div>{invoice.company.address}</div>
-            <div>Contact No : {invoice.company.contact}</div>
-            <div>GSTIN : {invoice.company.gstin}</div>
+          <div className="logo">
+            {firm?.firmDetails?.logoImagePath ? (
+              <img
+                src={firm.firmDetails.logoImagePath}
+                className="logo-img"
+                alt="logo"
+              />
+            ) : (
+              firm?.firmCode ?? "ST"
+            )}
           </div>
+
+          <div className="company">
+            <div className="title">{firm?.firmName}</div>
+            <div>{firm?.firmDetails?.address ?? ""}</div>
+            <div>Contact No : {firm?.firmDetails?.contactNumber ?? ""}</div>
+            <div>GSTIN : {firm?.firmDetails?.gstNumber ?? ""}</div>
+          </div>
+
           <div className="invoice-word">Invoice</div>
         </div>
 
-        {/* TO + INFO */}
+        {/* ================= TO + INFO ================= */}
         <table className="table">
           <tbody>
             <tr>
               <td>
                 <b>To</b><br />
-                {invoice.to.name}<br />
-                {invoice.to.address}<br />
-                GST No : {invoice.to.gstin}
+                {duty.customerName}<br />
+                {duty.customerAddress ?? ""}<br />
+                GST No : {duty.customerGstNumber ?? ""}
               </td>
               <td>
-                Date : {invoice.info.date}<br />
-                Invoice No : {invoice.info.invoiceNo}<br />
-                Itinerary Code : {invoice.info.itinerary}<br />
-                Duty Slip No : {invoice.info.dutySlip}<br />
-                Booked By : {invoice.info.bookedBy}
+                Date : {formatDate(duty.bookedDate)} <br />
+                Iternary Code:<br/>
+                Invoice No : {generateInvoiceNo(duty.createdAt, duty.dutySlipId)} <br />
+                Duty Slip No : {formatDutySlipNo(duty.dutySlipId)} <br />
+                Booked By : {duty.driverName ?? ""}
               </td>
             </tr>
           </tbody>
         </table>
 
-        {/* ✅ BILL / USER / CAB (LEFT ALIGNED – FIXED) */}
+        {/* ================= BILL / USER / CAB ================= */}
         <table className="table bill-user-cab">
           <thead>
             <tr>
@@ -118,45 +135,60 @@ export default function InvoicePrintPage() {
           <tbody>
             <tr>
               <td>
-                <b>{invoice.billTo.name}</b><br />
-                {invoice.billTo.address}
+                <b>{duty.customerName}</b><br />
+                {duty.customerAddress ?? ""}<br />
               </td>
+
+              {/* ✅ CUSTOMER USERS */}
               <td>
-                Name : {invoice.user.name}<br />
-                Mob No : {invoice.user.mobile}
-              </td>
+  {customerUsers.length === 0 ? (
+    "-"
+  ) : (
+    customerUsers.map((u: any) => (
+      <div key={u.customerUserId} style={{ marginBottom: "6px" }}>
+        <div>
+          <b>Name :</b> {u.userName}
+        </div>
+        <div>
+          <b>Mob. No :</b> {u.mobileNumber}
+        </div>
+      </div>
+    ))
+  )}
+</td>
+
               <td>
-                Cab Type : {invoice.cab.type}<br />
-                Cab No : {invoice.cab.number}<br />
-                Driver Name : {invoice.cab.driver}<br />
-                {invoice.cab.place}
+                Cab Type : {duty.sentCabType ?? duty.requestedCabType ?? ""}<br />
+                Cab No : {duty.cabNumber ?? ""}<br />
+                Driver Name : {duty.driverName ?? ""}<br />
+                {duty.destination ?? ""}
               </td>
             </tr>
           </tbody>
         </table>
 
-        {/* TRIP DETAILS */}
+        {/* ================= TRIP DETAILS ================= */}
         <table className="table">
           <tbody>
             <tr>
-              <td>Start Kms</td><td>{invoice.trip.startKm}</td>
-              <td>Start Date</td><td>{invoice.trip.startDate}</td>
-              <td>Start Time</td><td>{invoice.trip.startTime}</td>
+              <td>Start Kms</td><td>{duty.startKms ?? ""}</td>
+              <td>Start Date</td><td>{formatDate(duty.startDateTime)}</td>
+              <td>Start Time</td><td>{formatTime(duty.startDateTime)}</td>
             </tr>
             <tr>
-              <td>Close Kms</td><td>{invoice.trip.closeKm}</td>
-              <td>End Date</td><td>{invoice.trip.endDate}</td>
-              <td>End Time</td><td>{invoice.trip.endTime}</td>
+              <td>Close Kms</td><td>{duty.closeKms ?? ""}</td>
+              <td>End Date</td><td>{formatDate(duty.closeDateTime)}</td>
+              <td>End Time</td><td>{formatTime(duty.closeDateTime)}</td>
             </tr>
             <tr>
-              <td>Total</td><td>{invoice.trip.totalKm}</td>
-              <td>Days</td><td>{invoice.trip.days}</td>
-              <td>Hours</td><td>{invoice.trip.hours}</td>
+              <td>Total</td><td>{duty.totalKms ?? ""}</td>
+              <td>Days</td><td></td>
+              <td>Hours</td><td></td>
             </tr>
           </tbody>
         </table>
 
-        {/* PARTICULARS */}
+        {/* ================= PARTICULARS (UNCHANGED) ================= */}
         <table className="table">
           <thead>
             <tr>
@@ -167,14 +199,10 @@ export default function InvoicePrintPage() {
             </tr>
           </thead>
           <tbody>
-            {invoice.items.map((i, idx) => (
-              <tr key={idx}>
-                <td>{i.name}</td>
-                <td>{i.qty}</td>
-                <td>{i.rate}</td>
-                <td>{i.qty * i.rate}</td>
-              </tr>
-            ))}
+            <tr><td>FIRST 80KM / 8 HOURS</td><td>1</td><td>3900</td><td>3900</td></tr>
+            <tr><td>Extra Km</td><td>60</td><td>13</td><td>780</td></tr>
+            <tr><td>Extra Hrs</td><td>2</td><td>85</td><td>170</td></tr>
+            <tr><td>Toll and Parking</td><td>1</td><td>405</td><td>405</td></tr>
             <tr>
               <td colSpan={3}><b>Total Amount</b></td>
               <td><b>{total}</b></td>
@@ -182,58 +210,42 @@ export default function InvoicePrintPage() {
           </tbody>
         </table>
 
-        {/* TERMS + SIGNATURES */}
+        {/* ================= TERMS + SIGN ================= */}
         <table className="table">
           <tbody>
             <tr style={{ height: "120px" }}>
               <td style={{ width: "50%", fontSize: "10px" }}>
-                {isLoading
-                  ? "Loading terms..."
-                  : terms
-                      .filter((t) => t.isActive)
-                      .map((t) => (
-                        <div key={t.firmTermId}>
-                          {t.description.replace(/\.$/, "")}.
-                        </div>
-                      ))}
+                {terms
+                  .filter(t => t.isActive)
+                  .map(t => (
+                    <div key={t.firmTermId}>{t.description}</div>
+                  ))}
               </td>
               <td style={{ width: "25%", textAlign: "center" }}>
-                <b>Customer Sign</b>
+                Customer Sign
               </td>
               <td style={{ width: "25%", textAlign: "center" }}>
-                <b>For Shravani Tours and Travels</b>
+                For {firm?.firmName}
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      {/* STYLES */}
+      {/* ================= STYLES ================= */}
       <style jsx>{`
         @page { size: A4; margin: 10mm; }
         .toolbar { text-align: right; margin-bottom: 6px; }
         .sheet { border: 1px solid #000; padding: 8mm; font-family: Arial; font-size: 11px; }
-        .header-box { border: 1px solid #000; display: grid; grid-template-columns: 50px 1fr 80px; padding: 6px; }
-        .logo { border: 1px solid #000; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .company { text-align: center; }
-        .title { font-size: 14px; font-weight: bold; }
+        .header-box { border: 1px solid #000; display: grid; grid-template-columns: 60px 1fr 80px; padding: 6px; }
+        .logo { border: 1px solid #000; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
+        .logo-img { width: 100%; height: 100%; object-fit: contain; }
+        .company { text-align: center; line-height: 1.3; }
+        .title { font-size: 14px; font-weight: bold; text-transform: uppercase; }
         .invoice-word { text-align: right; font-weight: bold; }
         .table { width: 100%; border-collapse: collapse; margin-top: 6px; }
         .table th, .table td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
-
-        /* 🔒 ONLY THIS TABLE IS AFFECTED */
-        .bill-user-cab th,
-        .bill-user-cab td {
-          text-align: left;
-        }
-        .bill-user-cab th:nth-child(1),
-        .bill-user-cab td:nth-child(1) { width: 40%; }
-        .bill-user-cab th:nth-child(2),
-        .bill-user-cab td:nth-child(2) { width: 30%; }
-        .bill-user-cab th:nth-child(3),
-        .bill-user-cab td:nth-child(3) { width: 30%; }
-
-        @media print { .toolbar { display: none !important; } }
+        @media print { .toolbar { display: none; } }
       `}</style>
     </div>
   );

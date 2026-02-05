@@ -24,6 +24,7 @@ export const api = createApi({
         "Firms",
         "Users",
         "Customers",
+        "CustomerUsers",
         "CabNumberDirectory",
         "DutySlip",
         "DutyExpense",

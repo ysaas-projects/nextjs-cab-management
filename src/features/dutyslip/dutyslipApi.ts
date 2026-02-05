@@ -125,7 +125,11 @@ export const dutySlipApi = api.injectEndpoints({
       invalidatesTags: ["DutySlip"],
     }),
 
-
+getDutySlipInvoice: builder.query<any, number>({
+  query: (dutySlipId) =>
+    `/dutyslips/${dutySlipId}/invoice`,
+  transformResponse: (res: ApiResponse<any>) => res.data,
+}),
   }),
 });
 
@@ -134,6 +138,7 @@ export const {
   useGetDutySlipsQuery,
   useAssignDriverMutation,
   useGetDutySlipDetailsQuery,
+   useGetDutySlipInvoiceQuery, // ✅ ADD THIS
 
   useStartJourneyMutation,
   useEndJourneyMutation,

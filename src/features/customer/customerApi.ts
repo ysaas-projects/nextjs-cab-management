@@ -6,6 +6,15 @@ export const customerApi = api.injectEndpoints({
   endpoints: (builder) => ({
 
     // ===============================
+    // GET ALL CUSTOMERS (NON-PAGINATED)
+    // ===============================
+    getCustomers: builder.query<Customer[], void>({
+      query: () => API_ROUTES.CUSTOMERS,
+      transformResponse: (res: ApiResponse<Customer[]>) => res.data,
+      providesTags: ["Customers"],
+    }),
+
+    // ===============================
     // GET CUSTOMERS (PAGINATED)
     // ===============================
     getCustomersPaginated: builder.query<
@@ -15,7 +24,7 @@ export const customerApi = api.injectEndpoints({
         currentPage: number;
         totalPages: number;
         items: Customer[];
-      },
+      }, 
       {
         pageNumber?: number;
         pageSize?: number;
@@ -28,8 +37,8 @@ export const customerApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          search,
-          isActive,
+          ...(search !== undefined ? { search } : {}),
+          ...(isActive !== undefined ? { isActive } : {}),
         },
       }),
       transformResponse: (res: ApiResponse<any>) => res.data,
@@ -93,6 +102,7 @@ export const customerApi = api.injectEndpoints({
 });
 
 export const {
+  useGetCustomersQuery,
   useGetCustomersPaginatedQuery,
   useGetCustomerByIdQuery,
   useCreateCustomerMutation,
