@@ -1,7 +1,7 @@
 // features/cabprice/cabpriceApi.ts
 
 import { api } from "@/store/api";
-import { ApiResponse, CabPrice } from "./cabprice.types";
+import { ApiResponse, CabPrice, CabPricingMatrix } from "./cabprice.types";
 
 export const cabpriceApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -31,6 +31,16 @@ getCabPrice: builder.query<CabPrice, number>({
       transformResponse: (res: ApiResponse<CabPrice[]>) => res.data,
       providesTags: ["CabPrices"],
     }),
+
+    // ===============================
+    // GET CAB PRICING MATRIX
+    // ===============================
+    getCabPricingMatrix: builder.query<CabPricingMatrix[], void>({
+      query: () => "/cabprices/matrix",
+      transformResponse: (res: ApiResponse<CabPricingMatrix[]>) => res.data,
+      providesTags: ["CabPrices"],
+    }),
+
 
     // ===============================
     // CREATE CAB PRICE
@@ -78,6 +88,7 @@ getCabPrice: builder.query<CabPrice, number>({
       invalidatesTags: ["CabPrices"],
     }),
 
+    
     // ===============================
     // DELETE CAB PRICE (SOFT DELETE)
     // ===============================
@@ -100,7 +111,7 @@ export const {
   useCreateCabPriceMutation,
   useUpdateCabPriceMutation,
   useDeleteCabPriceMutation, 
-    useGetCabPriceQuery, 
-
+  useGetCabPriceQuery, 
+  useGetCabPricingMatrixQuery,
 
 } = cabpriceApi;
