@@ -29,17 +29,18 @@ export const driverDetailApi = api.injectEndpoints({
     // CREATE DRIVER DETAIL
     // =========================
     createDriverDetail: builder.mutation<
-      DriverDetail,
-      CreateDriverDetailPayload
-    >({
-      query: (payload) => ({
-        url: API_ROUTES.DRIVER_DETAILS,
-        method: "POST",
-        body: payload,
-      }),
-      transformResponse: (res: ApiResponse<DriverDetail>) => res.data,
-      invalidatesTags: ["DriverDetail"],
-    }),
+  { driverDetailId: number },
+  CreateDriverDetailPayload
+>({
+  query: (payload) => ({
+    url: API_ROUTES.DRIVER_DETAILS,
+    method: "POST",
+    body: payload,
+  }),
+  transformResponse: (res: ApiResponse<{ driverDetailId: number }>) => res.data,
+  invalidatesTags: ["DriverDetail"],
+}),
+
 
     // =========================
     // UPDATE DRIVER DETAIL

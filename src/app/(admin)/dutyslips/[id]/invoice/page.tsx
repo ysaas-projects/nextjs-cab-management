@@ -4,9 +4,6 @@ import { useState } from "react";
 import { useGetFirmTermsQuery } from "@/features/firmTerm/firmTermApi";
 
 export default function InvoicePrintPage() {
-  // =======================
-  // 1️⃣ INVOICE STATE
-  // =======================
   const [invoice] = useState({
     company: {
       name: "SHRAVANI TOURS AND TRAVELS",
@@ -62,9 +59,6 @@ export default function InvoicePrintPage() {
     ],
   });
 
-  // =======================
-  // 2️⃣ TERMS API (COMMON FOR ALL INVOICES)
-  // =======================
   const { data: terms = [], isLoading } = useGetFirmTermsQuery();
 
   const total = invoice.items.reduce(
@@ -74,7 +68,6 @@ export default function InvoicePrintPage() {
 
   return (
     <div className="page">
-      {/* SCREEN ONLY */}
       <div className="toolbar">
         <button onClick={() => window.print()}>🖨 Print Invoice</button>
       </div>
@@ -83,14 +76,12 @@ export default function InvoicePrintPage() {
         {/* HEADER */}
         <div className="header-box">
           <div className="logo">ST</div>
-
           <div className="company">
             <div className="title">{invoice.company.name}</div>
             <div>{invoice.company.address}</div>
             <div>Contact No : {invoice.company.contact}</div>
             <div>GSTIN : {invoice.company.gstin}</div>
           </div>
-
           <div className="invoice-word">Invoice</div>
         </div>
 
@@ -115,8 +106,8 @@ export default function InvoicePrintPage() {
           </tbody>
         </table>
 
-        {/* BILL TO / USER / CAB */}
-        <table className="table">
+        {/* ✅ BILL / USER / CAB (LEFT ALIGNED – FIXED) */}
+        <table className="table bill-user-cab">
           <thead>
             <tr>
               <th>Bill To</th>
@@ -191,55 +182,30 @@ export default function InvoicePrintPage() {
           </tbody>
         </table>
 
-        {/* ✅ TERMS + SIGNATURES (FINAL LAYOUT) */}
-       {/* ✅ TERMS + SIGNATURES (FINAL FIXED LAYOUT) */}
-<table className="table">
-  <tbody>
-    <tr style={{ height: "120px" }}>
-      {/* TERMS (TOP-LEFT) */}
-      <td style={{ width: "50%", fontSize: "10px", verticalAlign: "top" }}>
-        {isLoading ? (
-          <div>Loading terms...</div>
-        ) : terms.length === 0 ? (
-          <div>No terms available</div>
-        ) : (
-          terms
-            .filter((t) => t.isActive)
-            .map((term) => (
-              <div key={term.firmTermId}>
-                {term.description.replace(/\.$/, "")}.
-              </div>
-            ))
-        )}
-      </td>
-
-      {/* CUSTOMER SIGN (BOTTOM-CENTER) */}
-      <td
-        style={{
-          width: "25%",
-          textAlign: "center",
-          verticalAlign: "top",
-          paddingBottom: "8px",
-        }}
-      >
-        <b>Customer Sign</b>
-      </td>
-
-      {/* COMPANY SIGN (BOTTOM-RIGHT) */}
-      <td
-        style={{
-          width: "25%",
-          textAlign: "center",
-          verticalAlign: "top",
-          paddingBottom: "8px",
-        }}
-      >
-        <b>For Shravani Tours and Travels</b>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+        {/* TERMS + SIGNATURES */}
+        <table className="table">
+          <tbody>
+            <tr style={{ height: "120px" }}>
+              <td style={{ width: "50%", fontSize: "10px" }}>
+                {isLoading
+                  ? "Loading terms..."
+                  : terms
+                      .filter((t) => t.isActive)
+                      .map((t) => (
+                        <div key={t.firmTermId}>
+                          {t.description.replace(/\.$/, "")}.
+                        </div>
+                      ))}
+              </td>
+              <td style={{ width: "25%", textAlign: "center" }}>
+                <b>Customer Sign</b>
+              </td>
+              <td style={{ width: "25%", textAlign: "center" }}>
+                <b>For Shravani Tours and Travels</b>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       {/* STYLES */}
@@ -254,6 +220,19 @@ export default function InvoicePrintPage() {
         .invoice-word { text-align: right; font-weight: bold; }
         .table { width: 100%; border-collapse: collapse; margin-top: 6px; }
         .table th, .table td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+
+        /* 🔒 ONLY THIS TABLE IS AFFECTED */
+        .bill-user-cab th,
+        .bill-user-cab td {
+          text-align: left;
+        }
+        .bill-user-cab th:nth-child(1),
+        .bill-user-cab td:nth-child(1) { width: 40%; }
+        .bill-user-cab th:nth-child(2),
+        .bill-user-cab td:nth-child(2) { width: 30%; }
+        .bill-user-cab th:nth-child(3),
+        .bill-user-cab td:nth-child(3) { width: 30%; }
+
         @media print { .toolbar { display: none !important; } }
       `}</style>
     </div>
