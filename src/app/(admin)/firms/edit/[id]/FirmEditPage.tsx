@@ -10,21 +10,27 @@ import CustomInput from "@/components/atoms/CustomInput";
 import {
   useGetFirmByIdQuery,
   useUpdateFirmMutation,
+  useUpdateFirmLogoMutation,
 } from "@/features/firm/firmApi";
 
 export default function EditFirmPage() {
   const router = useRouter();
   const params = useParams();
-  const firmId = Number(
-    Array.isArray(params.id) ? params.id[0] : params.id
-  );
-
-  const { data, isLoading } = useGetFirmByIdQuery(firmId);
-  const [updateFirm, { isLoading: saving }] =
-    useUpdateFirmMutation();
+  const firmId = Number(params.id);
 
   /* ===============================
-     FORM STATE (Firm + FirmDetails)
+     API HOOKS
+  =============================== */
+  const { data, isLoading } = useGetFirmByIdQuery(firmId);
+
+  const [updateFirm, { isLoading: savingFirm }] =
+    useUpdateFirmMutation();
+
+  const [updateFirmLogo, { isLoading: savingDetails }] =
+    useUpdateFirmLogoMutation();
+
+  /* ===============================
+     FORM STATE
   =============================== */
   const [form, setForm] = useState({
     firmName: "",
@@ -38,13 +44,10 @@ export default function EditFirmPage() {
     logoImagePath: "",
   });
 
-  /* ===============================
-     LOGO FILE (same as Create)
-  =============================== */
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
   /* ===============================
-     PREFILL FORM
+     PREFILL DATA
   =============================== */
   useEffect(() => {
     if (data) {
@@ -69,6 +72,7 @@ export default function EditFirmPage() {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value, type, checked } = e.target;
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -79,46 +83,59 @@ export default function EditFirmPage() {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    setLogoFile(file);
+    if (file) {
+      setLogoFile(file);
+    }
   };
 
   /* ===============================
-     SAVE
+     SAVE (FINAL + CORRECT)
   =============================== */
   const handleSave = async () => {
     if (!form.firmName || !form.firmCode) {
-      enqueueSnackbar("Firm Name & Firm Code are required", {
+      enqueueSnackbar("Firm Name & Firm Code required", {
         variant: "error",
       });
       return;
     }
 
     try {
+      /* ========= 1️⃣ UPDATE FIRM ========= */
       await updateFirm({
         firmId,
-        firmName: form.firmName,
-        firmCode: form.firmCode,
+        firmName: form.firmName.trim(),
+        firmCode: form.firmCode.trim(),
         isActive: form.isActive,
-
-        address: form.address,
-        contactNumber: form.contactNumber,
-        contactPerson: form.contactPerson,
-        gstNumber: form.gstNumber,
-
-        // 🔹 keep existing logo if no new file selected
-        logoImagePath: logoFile
-          ? logoFile.name // placeholder until upload API
-          : form.logoImagePath,
       }).unwrap();
+
+      /* ========= 2️⃣ UPDATE FIRM DETAILS ========= */
+      if (data?.firmDetails?.firmDetailsId) {
+        const fd = new FormData();
+
+        fd.append("Address", form.address.trim());
+        fd.append("ContactNumber", form.contactNumber.trim()); // ✅ NO +91
+        fd.append("ContactPerson", form.contactPerson ?? "");
+        fd.append("GstNumber", form.gstNumber.trim());
+        fd.append("IsActive", String(form.isActive));
+
+        if (logoFile) {
+          fd.append("Logo", logoFile); // ✅ MATCHES DTO
+        }
+
+        await updateFirmLogo({
+          firmDetailsId: data.firmDetails.firmDetailsId,
+          formData: fd,
+        }).unwrap();
+      }
 
       enqueueSnackbar("Firm updated successfully", {
         variant: "success",
       });
 
       router.push("/firms");
-    } catch {
-      enqueueSnackbar("Failed to update firm", {
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar("Update failed", {
         variant: "error",
       });
     }
@@ -129,7 +146,7 @@ export default function EditFirmPage() {
   }
 
   /* ===============================
-     UI
+     UI (UNCHANGED)
   =============================== */
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
@@ -202,9 +219,9 @@ export default function EditFirmPage() {
           onChange={handleChange}
         />
 
-        {/* ================= Logo Upload ================= */}
+        {/* ================= Logo ================= */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium mb-1">
             Firm Logo
           </label>
 
@@ -212,16 +229,11 @@ export default function EditFirmPage() {
             type="file"
             accept="image/*"
             onChange={handleLogoChange}
-            className="block w-full text-sm text-gray-700
-              file:mr-4 file:rounded file:border-0
-              file:bg-blue-50 file:px-4 file:py-2
-              file:text-sm file:font-medium
-              file:text-blue-700 hover:file:bg-blue-100"
           />
 
           {!logoFile && form.logoImagePath && (
-            <p className="mt-1 text-xs text-gray-500">
-              Current: {form.logoImagePath}
+            <p className="mt-1 text-xs text-gray-500 break-all">
+              Current Logo: {form.logoImagePath}
             </p>
           )}
 
@@ -235,17 +247,14 @@ export default function EditFirmPage() {
 
       {/* ================= ACTIONS ================= */}
       <div className="flex justify-end gap-3 mt-8">
-        <Button
-          variant="default"
-          onClick={() => history.back()}
-        >
+        <Button variant="default" onClick={() => history.back()}>
           Cancel
         </Button>
 
         <Button
           variant="primary"
           onClick={handleSave}
-          isLoading={saving}
+          isLoading={savingFirm || savingDetails}
         >
           Save Changes
         </Button>

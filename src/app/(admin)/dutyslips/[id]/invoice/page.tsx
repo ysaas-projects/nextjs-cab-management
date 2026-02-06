@@ -10,66 +10,46 @@ import { useGetMyFirmQuery } from "@/features/firm/firmApi";
 import { useGetFirmTermsQuery } from "@/features/firmTerm/firmTermApi";
 import { useGetDutySlipInvoiceQuery } from "@/features/dutyslip/dutyslipApi";
 
-/* =======================
-   HELPERS
-======================= */
-const formatDate = (date?: string | null) => {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("en-GB");
-};
+/* ================= HELPERS ================= */
+const formatDate = (v?: string | null) =>
+  v ? new Date(v).toLocaleDateString("en-GB") : "";
 
-const formatTime = (date?: string | null) => {
-  if (!date) return "";
-  return new Date(date).toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
+const formatTime = (v?: string | null) =>
+  v
+    ? new Date(v).toLocaleTimeString("en-GB", {
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : "";
 
-const generateInvoiceNo = (createdAt?: string, id?: number) => {
+const invoiceNo = (createdAt?: string, id?: number) => {
   if (!createdAt || !id) return "";
   const d = new Date(createdAt);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  return `INV-${year}${month}-${id}`;
+  return `INV-${d.getFullYear()}-${String(id).padStart(4, "0")}`;
 };
 
-const formatDutySlipNo = (id?: number) => {
-  if (!id) return "";
-  return String(id).padStart(4, "0");
-};
+const dutySlipNo = (id?: number) =>
+  id ? String(id).padStart(4, "0") : "";
 
+/* ================= PAGE ================= */
 export default function InvoicePrintPage() {
-  /* =======================
-     PARAM
-  ======================= */
   const { id } = useParams();
   const dutySlipId = Number(id);
 
-  /* =======================
-     LOGIN FIRM
-  ======================= */
   const { data: firm } = useGetMyFirmQuery();
-
-  /* =======================
-     FIRM TERMS
-  ======================= */
   const { data: terms = [] } = useGetFirmTermsQuery();
-
-  /* =======================
-     INVOICE API (IMPORTANT)
-  ======================= */
   const { data } = useGetDutySlipInvoiceQuery(dutySlipId);
 
   const duty = data?.dutySlip;
-  const customerUsers = data?.customerUsers ?? [];
+  const users = data?.customerUsers ?? [];
 
-  /* =======================
-     TOTAL (STATIC FOR NOW)
-  ======================= */
-  const total = useMemo(() => 5255, []);
+  const totalMinutes = duty?.totalTimeInMin ?? 0;
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalDays = Math.ceil(totalHours / 24);
 
-  if (!duty) return <div>Loading invoice...</div>;
+  const totalAmount = useMemo(() => 5255, []);
+
+  if (!duty) return <div>Loading invoice…</div>;
 
   return (
     <div className="page">
@@ -78,118 +58,142 @@ export default function InvoicePrintPage() {
       </div>
 
       <div className="sheet">
-        {/* ================= HEADER ================= */}
-        <div className="header-box">
-          <div className="logo">
-            {firm?.firmDetails?.logoImagePath ? (
-              <img
-                src={firm.firmDetails.logoImagePath}
-                className="logo-img"
-                alt="logo"
-              />
-            ) : (
-              firm?.firmCode ?? "ST"
-            )}
-          </div>
+       {/* ================= HEADER ================= */}
+<div className="header">
+  {/* Logo */}
+  <div className="logo">
+    {firm?.firmDetails?.logoImagePath ? (
+      <img src={firm.firmDetails.logoImagePath} />
+    ) : (
+      <b>{firm?.firmCode}</b>
+    )}
+  </div>
 
-          <div className="company">
-            <div className="title">{firm?.firmName}</div>
-            <div>{firm?.firmDetails?.address ?? ""}</div>
-            <div>Contact No : {firm?.firmDetails?.contactNumber ?? ""}</div>
-            <div>GSTIN : {firm?.firmDetails?.gstNumber ?? ""}</div>
-          </div>
+  {/* Company Details */}
+  <div className="company">
+    <div className="title">{firm?.firmName}</div>
+    <div>{firm?.firmDetails?.address}</div>
+    <div>Contact No : {firm?.firmDetails?.contactNumber}</div>
+  </div>
 
-          <div className="invoice-word">Invoice</div>
-        </div>
+  {/* Invoice + GST */}
+  <div className="rightBox">
+    <div className="invoiceText">Invoice</div>
+    <div className="gstText">
+      GSTIN : {firm?.firmDetails?.gstNumber}
+    </div>
+  </div>
+</div>
 
-        {/* ================= TO + INFO ================= */}
-        <table className="table">
+
+        {/* ================= TO / INFO ================= */}
+        <table className="tbl">
           <tbody>
             <tr>
               <td>
                 <b>To</b><br />
                 {duty.customerName}<br />
-                {duty.customerAddress ?? ""}<br />
-                GST No : {duty.customerGstNumber ?? ""}
+                {duty.customerAddress}<br />
+                GST No : {duty.customerGstNumber}
               </td>
               <td>
-                Date : {formatDate(duty.bookedDate)} <br />
-                Iternary Code:<br/>
-                Invoice No : {generateInvoiceNo(duty.createdAt, duty.dutySlipId)} <br />
-                Duty Slip No : {formatDutySlipNo(duty.dutySlipId)} <br />
-                Booked By : {duty.driverName ?? ""}
+                Date : {formatDate(duty.bookedDate)}<br />
+                Invoice No : {invoiceNo(duty.createdAt, duty.dutySlipId)}<br />
+                Duty Slip No : {dutySlipNo(duty.dutySlipId)}<br />
+                Booked By : {duty.driverName}
               </td>
             </tr>
           </tbody>
         </table>
 
         {/* ================= BILL / USER / CAB ================= */}
-        <table className="table bill-user-cab">
+        <table className="tbl">
           <thead>
             <tr>
-              <th>Bill To</th>
-              <th>User Details</th>
-              <th>Cab Details</th>
+              <th style={{ width: "33%" }}>Bill To</th>
+              <th style={{ width: "34%" }}>User Details</th>
+              <th style={{ width: "33%" }}>Cab Details</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>
                 <b>{duty.customerName}</b><br />
-                {duty.customerAddress ?? ""}<br />
+                {duty.customerAddress}
               </td>
 
-              {/* ✅ CUSTOMER USERS */}
               <td>
-  {customerUsers.length === 0 ? (
-    "-"
-  ) : (
-    customerUsers.map((u: any) => (
-      <div key={u.customerUserId} style={{ marginBottom: "6px" }}>
-        <div>
-          <b>Name :</b> {u.userName}
-        </div>
-        <div>
-          <b>Mob. No :</b> {u.mobileNumber}
-        </div>
-      </div>
-    ))
-  )}
-</td>
+                {users.map((u: any) => (
+                  <div key={u.customerUserId}>
+                    Name : {u.userName}<br />
+                    Mob. No : {u.mobileNumber}
+                  </div>
+                ))}
+              </td>
 
               <td>
-                Cab Type : {duty.sentCabType ?? duty.requestedCabType ?? ""}<br />
-                Cab No : {duty.cabNumber ?? ""}<br />
-                Driver Name : {duty.driverName ?? ""}<br />
-                {duty.destination ?? ""}
+                Cab Type : {duty.sentCabType}<br />
+                Cab No : {duty.cabNumber}<br />
+                Driver Name : {duty.driverName}
               </td>
             </tr>
           </tbody>
         </table>
 
+        <table className="tbl">
+  <tbody>
+    <tr>
+      <td
+        colSpan={2}
+        style={{
+          borderTop: "1px solid #000",
+          borderBottom: "1px solid #000",
+          borderLeft: "1px solid #000",
+          borderRight: "none",
+        }}
+      ></td>
+
+      <td
+        style={{
+          borderTop: "1px solid #000",
+          borderBottom: "1px solid #000",
+          borderLeft: "none",
+          borderRight: "1px solid #000",
+          textAlign: "right",
+          fontWeight: "bold",
+          paddingRight: "8px",
+        }}
+      >
+        {duty.destination}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
         {/* ================= TRIP DETAILS ================= */}
-        <table className="table">
+        <table className="tbl">
           <tbody>
             <tr>
-              <td>Start Kms</td><td>{duty.startKms ?? ""}</td>
+              <td>Start Kms</td><td>{duty.startKms}</td>
               <td>Start Date</td><td>{formatDate(duty.startDateTime)}</td>
               <td>Start Time</td><td>{formatTime(duty.startDateTime)}</td>
             </tr>
             <tr>
-              <td>Close Kms</td><td>{duty.closeKms ?? ""}</td>
+              <td>Close Kms</td><td>{duty.closeKms}</td>
               <td>End Date</td><td>{formatDate(duty.closeDateTime)}</td>
               <td>End Time</td><td>{formatTime(duty.closeDateTime)}</td>
             </tr>
             <tr>
-              <td>Total</td><td>{duty.totalKms ?? ""}</td>
-              <td>Days</td><td></td>
-              <td>Hours</td><td></td>
+              <td>Total</td><td>{duty.totalKms}</td>
+              <td>Days</td><td>{totalDays}</td>
+              <td>Hours</td><td>{totalHours}</td>
             </tr>
           </tbody>
         </table>
 
-        {/* ================= PARTICULARS (UNCHANGED) ================= */}
-        <table className="table">
+        {/* ================= PARTICULARS ================= */}
+        <table className="tbl">
           <thead>
             <tr>
               <th>Particulars</th>
@@ -205,26 +209,29 @@ export default function InvoicePrintPage() {
             <tr><td>Toll and Parking</td><td>1</td><td>405</td><td>405</td></tr>
             <tr>
               <td colSpan={3}><b>Total Amount</b></td>
-              <td><b>{total}</b></td>
+              <td><b>{totalAmount}</b></td>
             </tr>
           </tbody>
         </table>
 
-        {/* ================= TERMS + SIGN ================= */}
-        <table className="table">
+        {/* ================= RUPEES IN WORD ================= */}
+        <div className="words">
+          <b>RUPEES IN WORD :</b> Five Thousand Two Hundred Fifty Five Rupees Only.
+        </div>
+
+        {/* ================= TERMS + SIGN (TOP ALIGNED) ================= */}
+        <table className="tbl">
           <tbody>
-            <tr style={{ height: "120px" }}>
-              <td style={{ width: "50%", fontSize: "10px" }}>
-                {terms
-                  .filter(t => t.isActive)
-                  .map(t => (
-                    <div key={t.firmTermId}>{t.description}</div>
-                  ))}
+            <tr style={{ height: 120 }}>
+              <td style={{ width: "50%", fontSize: 10, verticalAlign: "top" }}>
+                {terms.filter(t => t.isActive).map(t => (
+                  <div key={t.firmTermId}>{t.description}</div>
+                ))}
               </td>
-              <td style={{ width: "25%", textAlign: "center" }}>
+              <td style={{ width: "25%", textAlign: "center", verticalAlign: "top" }}>
                 Customer Sign
               </td>
-              <td style={{ width: "25%", textAlign: "center" }}>
+              <td style={{ width: "25%", textAlign: "center", verticalAlign: "top" }}>
                 For {firm?.firmName}
               </td>
             </tr>
@@ -237,14 +244,57 @@ export default function InvoicePrintPage() {
         @page { size: A4; margin: 10mm; }
         .toolbar { text-align: right; margin-bottom: 6px; }
         .sheet { border: 1px solid #000; padding: 8mm; font-family: Arial; font-size: 11px; }
-        .header-box { border: 1px solid #000; display: grid; grid-template-columns: 60px 1fr 80px; padding: 6px; }
-        .logo { border: 1px solid #000; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
-        .logo-img { width: 100%; height: 100%; object-fit: contain; }
-        .company { text-align: center; line-height: 1.3; }
-        .title { font-size: 14px; font-weight: bold; text-transform: uppercase; }
-        .invoice-word { text-align: right; font-weight: bold; }
-        .table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-        .table th, .table td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+        .header { border: 1px solid #000; display: grid; grid-template-columns: 70px 1fr 80px; padding: 6px; }
+        .header {
+  border: 1px solid #000;
+  display: grid;
+  grid-template-columns: 70px 1fr 180px;
+  padding: 6px;
+  align-items: start;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.company {
+  text-align: center;
+  line-height: 1.3;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.rightBox {
+  text-align: right;
+  line-height: 1.4;
+}
+
+.invoiceText {
+  font-weight: bold;
+}
+
+.gstText {
+  font-size: 11px;
+}
+
+        .tbl { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        .tbl th, .tbl td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+        .destination { border: none; text-align: right; font-weight: bold; padding-right: 8px; }
+        .words { margin-top: 6px; font-size: 11px; }
         @media print { .toolbar { display: none; } }
       `}</style>
     </div>
