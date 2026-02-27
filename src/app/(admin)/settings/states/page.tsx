@@ -1,4 +1,5 @@
 "use client";
+// src\app\(admin)\settings\states\page.tsx
 
 import { useState } from "react";
 import ComponentCard from "@/components/common/ComponentCard";

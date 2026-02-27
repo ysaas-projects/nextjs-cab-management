@@ -43,11 +43,13 @@ const navItems: NavItem[] = [
 const othersItems: NavItem[] = [
   // { icon: <Icon name="BoxCubeIcon" />, name: "Roles", path: "/", roles: ["Super-Admin"] },
   // { icon: <Icon name="BoxCubeIcon" />, name: "Role Permissions", path: "/", roles: ["Super-Admin"] },
-  // { icon: <Icon name="BoxCubeIcon" />, name: "Document Types", path: "/", roles: ["Super-Admin"] },  
+  // { icon: <Icon name="BoxCubeIcon" />, name: "Document Types", path: "/", roles: ["Super-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "States", path: "/settings/states", roles: ["Super-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "Cities", path: "/settings/cities", roles: ["Super-Admin"] },  
-    { icon: <Icon name="BoxCubeIcon" />, name: "Pricing Rules", path: "/pricing-rules",roles: [ "Firm-Admin"]},
-    { icon: <Icon name="BoxCubeIcon" />, name: "FirmTerms", path: "/firm-terms" ,roles: [ "Firm-Admin"]},
+  { icon: <Icon name="BoxCubeIcon" />, name: "FirmTerms", path: "/firm-terms", roles: ["Firm-Admin"] },
+  { icon: <Icon name="BoxCubeIcon" />, name: "Time Segments", path: "/settings/time-segments", roles: ["Firm-Admin"] },
+  { icon: <Icon name="BoxCubeIcon" />, name: "Speed Policies", path: "/settings/firm-speed-policies", roles: ["Firm-Admin"] },
+  { icon: <Icon name="BoxCubeIcon" />, name: "Pricing Rules", path: "/pricing-rules", roles: ["Firm-Admin"] },
 
 ];
 
@@ -117,7 +119,8 @@ const AppSidebar: React.FC = () => {
         </Link>
       </div>
 
-      <nav className="px-4">
+      <nav className="px-4 overflow-y-auto"
+        style={{ maxHeight: "calc(100vh - 120px)" }}>
         <h2 className="text-xs uppercase text-gray-400 mb-4">Menu</h2>
         {renderMenu(navItems)}
 

@@ -97,7 +97,8 @@ const JourneyInfoCard = ({
                     label="End Time"
                     value={formatDateTime(closeDateTime)}
                 />
-
+                <div style={{ width: '100%', background: 'green', height: '2px' }}></div>
+                <div style={{ width: '100%', background: 'green', height: '2px' }}></div>
                 <Metric
                     label="Total KMs"
                     value={totalKms}

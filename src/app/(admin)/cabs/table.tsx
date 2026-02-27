@@ -128,6 +128,18 @@ const CabTable = ({ data }: Props) => {
                     Edit
                   </Button>
                 </Link>
+                <Link href={`/cabs/${item.id}/speed-override`}>
+                  <Button
+                    size="xs"
+                    variant="primary"
+                    outline
+                    startIcon={
+                      <Icon name="PencilIcon" className="w-5 h-5" />
+                    }
+                  >
+                    Speed Override
+                  </Button>
+                </Link>
 
                 {/* 🗑️ DELETE */}
                 <Button

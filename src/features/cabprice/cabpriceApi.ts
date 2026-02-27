@@ -43,6 +43,15 @@ getCabPrice: builder.query<CabPrice, number>({
 
 
     // ===============================
+    // GET CAB PRICING MATRIX BY CAB ID ✅ NEW
+    // ===============================
+    getCabPricingMatrixByCabId: builder.query<CabPricingMatrix[], number>({
+      query: (cabId) => `/cabprices/matrix/${cabId}`,
+      transformResponse: (res: ApiResponse<CabPricingMatrix[]>) => res.data,
+      providesTags: ["CabPrices"],
+    }),  
+
+    // ===============================
     // CREATE CAB PRICE
     // ===============================
     createCabPrice: builder.mutation<
@@ -113,5 +122,6 @@ export const {
   useDeleteCabPriceMutation, 
   useGetCabPriceQuery, 
   useGetCabPricingMatrixQuery,
+  useGetCabPricingMatrixByCabIdQuery,
 
 } = cabpriceApi;

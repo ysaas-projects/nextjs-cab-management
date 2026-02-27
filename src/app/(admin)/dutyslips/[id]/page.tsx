@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -12,11 +12,14 @@ import JourneyInfoCard from "./JourneyInfoCard";
 import ExpenseSection from "./ExpenseSection";
 import DutyExpenseModal from "../DutyExpenseModal";
 import DutySlipTimeline from "../DutySlipTimeline";
+import CabPricingSection from "./CabPricingSection";
 
 export default function DutySlipDetailsPage() {
     const params = useParams();
     const dutySlipId = Number(params.id);
 
+    const router = useRouter();
+    
     const { data, isLoading, isError } =
         useGetDutySlipDetailsQuery(dutySlipId);
 
@@ -39,8 +42,13 @@ export default function DutySlipDetailsPage() {
 
     return (
         <>
-            <PageBreadcrumb pageTitle="Duty Slip Details" />
-
+        <PageBreadcrumb
+        backUrl="/dutyslips"
+        items={[
+            { label: "Duty Slip", href: "/dutyslips" },
+            { label: "Duty Slip Details" }
+        ]}
+        />
             {/* ================= STATUS / TIMELINE ================= */}
             <div className="mb-6">
                 <DutySlipTimeline status={dutySlip.status} />
@@ -76,6 +84,12 @@ export default function DutySlipDetailsPage() {
                         expenses={expenses as DutyExpense[]}
                         onAddExpense={() => setIsExpenseOpen(true)}
                     />
+                    <CabPricingSection
+                        cabId={dutySlip.sentCab??0}
+                        onSave={(selected) => {
+                            console.log("Selected pricing rules:", selected);
+                        }}
+                    />                    
                 </div>
             </div>
 

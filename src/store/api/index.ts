@@ -30,8 +30,10 @@ export const api = createApi({
         "DutyExpense",
         "TourPackage",
         "Season",
-        "PackagePricing"
-
+        "PackagePricing",
+        "TimeSegment",
+        "FirmSpeedPolicy",
+        "CabSpeedOverride",
     ],
     endpoints: () => ({}),
 });
