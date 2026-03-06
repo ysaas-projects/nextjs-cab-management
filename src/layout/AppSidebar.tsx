@@ -30,9 +30,9 @@ const navItems: NavItem[] = [
 
   { icon: <Icon name="BoxCubeIcon" />, name: "CabNumberDirectory", path: "/cabnumber-directory",roles: [ "Firm-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "DutySlip", path: "/dutyslips",roles: [ "Firm-Admin"] },
-  { icon: <Icon name="BoxCubeIcon" />, name: "Tour Packages", path: "/tour-packages",roles: [ "Firm-Admin"] },
-  { icon: <Icon name="BoxCubeIcon" />, name: "Seasons", path: "/seasons",roles: [ "Firm-Admin"] },
-  { icon: <Icon name="BoxCubeIcon" />, name: "PackagePricing", path: "/package-pricing",roles: [ "Firm-Admin"] },
+  //{ icon: <Icon name="BoxCubeIcon" />, name: "Tour Packages", path: "/tour-packages",roles: [ "Firm-Admin"] },
+ // { icon: <Icon name="BoxCubeIcon" />, name: "Seasons", path: "/seasons",roles: [ "Firm-Admin"] },
+  //{ icon: <Icon name="BoxCubeIcon" />, name: "PackagePricing", path: "/package-pricing",roles: [ "Firm-Admin"] },
 
 
 
@@ -47,8 +47,8 @@ const othersItems: NavItem[] = [
   { icon: <Icon name="BoxCubeIcon" />, name: "States", path: "/settings/states", roles: ["Super-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "Cities", path: "/settings/cities", roles: ["Super-Admin"] },  
   { icon: <Icon name="BoxCubeIcon" />, name: "FirmTerms", path: "/firm-terms", roles: ["Firm-Admin"] },
-  { icon: <Icon name="BoxCubeIcon" />, name: "Time Segments", path: "/settings/time-segments", roles: ["Firm-Admin"] },
-  { icon: <Icon name="BoxCubeIcon" />, name: "Speed Policies", path: "/settings/firm-speed-policies", roles: ["Firm-Admin"] },
+  //{ icon: <Icon name="BoxCubeIcon" />, name: "Time Segments", path: "/settings/time-segments", roles: ["Firm-Admin"] },
+  //{ icon: <Icon name="BoxCubeIcon" />, name: "Speed Policies", path: "/settings/firm-speed-policies", roles: ["Firm-Admin"] },
   { icon: <Icon name="BoxCubeIcon" />, name: "Pricing Rules", path: "/pricing-rules", roles: ["Firm-Admin"] },
 
 ];

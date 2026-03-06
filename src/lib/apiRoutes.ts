@@ -40,5 +40,5 @@ export const API_ROUTES = {
   TIME_SEGMENTS: "/timesegments",
   FIRM_SPEED_POLICIES:'/firm-speed-policies',
   CAB_SPEED_OVERRIDES:'/cab-speed-overrides',
-
+  INVOICE_ITEMS: "/InvoiceItems",
 };

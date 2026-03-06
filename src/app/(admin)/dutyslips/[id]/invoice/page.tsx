@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import { useGetMyFirmQuery } from "@/features/firm/firmApi";
 import { useGetFirmTermsQuery } from "@/features/firmTerm/firmTermApi";
 import { useGetDutySlipInvoiceQuery } from "@/features/dutyslip/dutyslipApi";
-
+import { useGetInvoiceItemsByInvoiceIdQuery } from "@/features/invoiceitem/invoiceItemApi";
 /* ================= HELPERS ================= */
 const formatDate = (v?: string | null) =>
   v ? new Date(v).toLocaleDateString("en-GB") : "";
@@ -31,6 +31,7 @@ const invoiceNo = (createdAt?: string, id?: number) => {
 const dutySlipNo = (id?: number) =>
   id ? String(id).padStart(4, "0") : "";
 
+
 /* ================= PAGE ================= */
 export default function InvoicePrintPage() {
   const { id } = useParams();
@@ -46,8 +47,16 @@ export default function InvoicePrintPage() {
   const totalMinutes = duty?.totalTimeInMin ?? 0;
   const totalHours = Math.floor(totalMinutes / 60);
   const totalDays = Math.ceil(totalHours / 24);
+ const { data: invoiceItems = [] } =
+  useGetInvoiceItemsByInvoiceIdQuery(duty?.dutySlipId ?? 0);
 
-  const totalAmount = useMemo(() => 5255, []);
+
+const totalAmount = useMemo(() => {
+  return invoiceItems.reduce(
+    (sum: number, item: any) => sum + item.totalPrice,
+    0
+  );
+}, [invoiceItems]);
 
   if (!duty) return <div>Loading invoice…</div>;
 
@@ -202,16 +211,23 @@ export default function InvoicePrintPage() {
               <th>Total Amount</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td>FIRST 80KM / 8 HOURS</td><td>1</td><td>3900</td><td>3900</td></tr>
-            <tr><td>Extra Km</td><td>60</td><td>13</td><td>780</td></tr>
-            <tr><td>Extra Hrs</td><td>2</td><td>85</td><td>170</td></tr>
-            <tr><td>Toll and Parking</td><td>1</td><td>405</td><td>405</td></tr>
-            <tr>
-              <td colSpan={3}><b>Total Amount</b></td>
-              <td><b>{totalAmount}</b></td>
-            </tr>
-          </tbody>
+         <tbody>
+
+{invoiceItems.map((item: any) => (
+<tr key={item.invoiceItemId}>
+<td>{item.particulars}</td>
+<td>{item.quantity}</td>
+<td>{item.price}</td>
+<td>{item.totalPrice}</td>
+</tr>
+))}
+
+<tr>
+<td colSpan={3}><b>Total Amount</b></td>
+<td><b>{totalAmount}</b></td>
+</tr>
+
+</tbody>
         </table>
 
         {/* ================= RUPEES IN WORD ================= */}
@@ -295,8 +311,11 @@ export default function InvoicePrintPage() {
         .tbl th, .tbl td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
         .destination { border: none; text-align: right; font-weight: bold; padding-right: 8px; }
         .words { margin-top: 6px; font-size: 11px; }
-        @media print { .toolbar { display: none; } }
-      `}</style>
+@media print {
+  .toolbar {
+    display: none !important;
+  }
+}      `}</style>
     </div>
   );
 }

@@ -34,6 +34,7 @@ export const api = createApi({
         "TimeSegment",
         "FirmSpeedPolicy",
         "CabSpeedOverride",
+        "InvoiceItems"
     ],
     endpoints: () => ({}),
 });
